@@ -1,0 +1,50 @@
+## Project information
+site_name: Personal website
+site_description: Personal website of Louis Stefanuto
+
+## Repository
+repo_name: My Github projects
+repo_url: https://github.com/LouisStefanuto
+
+theme:
+  name: material
+  custom_dir: material
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+
+plugins:
+  - blog:
+      archive: false
+      categories_name: Topics
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/LouisStefanuto
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/louis-stefanuto/
+
+markdown_extensions:
+  # nested boxes
+  - pymdownx.superfences
+  # colored boxes to highlight key points
+  - admonition
+  # make these colored boxes collapsible
+  - pymdownx.details
+  # for menu fancy grid-organized boxes
+  - attr_list
+  - md_in_html
+  # emojis from Material
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+# Page tree
+nav:
+  - Home: index.md
+  - CV: cv.md
+  - Blog:
+    - blog/index.md
