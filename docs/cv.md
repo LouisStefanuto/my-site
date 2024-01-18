@@ -7,14 +7,14 @@
 
 Hello! I am **Louis Stefanuto**, I am French, and I am passionate about Artificial Intelligence and dealing with (big) data. Currently, I work as a **Data Scientist Consultant** at [**Capgemini Invent**](https://www.capgemini.com/about-us/who-we-are/our-brands/capgemini-invent/).
 
-I completed my engineering studies at École [**Polytechnique**](https://programmes.polytechnique.edu/cycle-ingenieur-polytechnicien/cycle-ingenieur-polytechnicien) (Cycle Grandes Ecoles), specializing in mechanics and Machine Learning. Additionally, I hold a dual degree "Ingenieur Civil" from **Mines Paris**, with a focus on Digital Engineering of Complex Systems.
+I completed my engineering studies at École [**Polytechnique**](https://programmes.polytechnique.edu/cycle-ingenieur-polytechnicien/cycle-ingenieur-polytechnicien) (Cycle Grandes Ecoles), specializing in Machine Learning and Mechanics. Additionally, I hold a dual degree "Ingénieur Civil" from **Mines Paris**, with a focus on AI Systems.
 
 ---
 
 !!! note ""
     ## 🎓 **Education**
     - 2022-2023 | **Mines Paris**: Dual degree "Ingénieur Civil" from Mines, specializing in Artificial Intelligence & Deep Learning.
-    - 2019-2023 | **École Polytechnique**: "Cycle Ingénieur Poytechnicien" at École Polytechnique with a specialization in mechanics and Machine Learning.
+    - 2019-2023 | **École Polytechnique**: "Cycle Ingénieur Poytechnicien" at École Polytechnique with a specialization in Mechanics and Machine Learning.
     - 2017-2019 | Preparatory Classes for Grandes Écoles: Lycée Ste Geneviève, intensive training in mathematics, physics, and chemistry (PCSI/PC*).
 
 !!! note ""
