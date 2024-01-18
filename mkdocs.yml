@@ -1,9 +1,9 @@
 ## Project information
-site_name: Personal website
+site_name: Louis Stefanuto
 site_description: Personal website of Louis Stefanuto
 
 ## Repository
-repo_name: My Github projects
+repo_name: Github
 repo_url: https://github.com/LouisStefanuto
 
 theme:
@@ -46,5 +46,5 @@ markdown_extensions:
 nav:
   - Home: index.md
   - CV: cv.md
-  - Blog:
+  - Posts:
     - blog/index.md
