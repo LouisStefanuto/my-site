@@ -2,6 +2,8 @@
 date: 2023-12-26
 authors:
   - LouisStefanuto
+categories:
+  - Diffusion models
 ---
 
 # **Diffusion models** - The maths
