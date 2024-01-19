@@ -18,7 +18,7 @@ theme:
 plugins:
   - blog:
       archive: false
-      categories_name: Topics
+      categories_name: Post series
 
 extra:
   social:
