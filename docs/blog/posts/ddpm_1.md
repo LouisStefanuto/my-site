@@ -61,14 +61,14 @@ Diffusion Models generate images by **iterative refinement**. They slowly add ra
 
 ### Forward diffusion process
 
-During the **forward diffusion process**, we add some gaussian noise to the image, iteratively. The image thus becomes more and more noisy. After hundred or thousands of steps, the resulting image is pure noise, all information being lost through diffusion.
+During the **forward diffusion process**, we add some gaussian noise to the image, iteratively. The image thus becomes more and more noisy. After hundreds or thousands of steps, the resulting image is pure noise, all information being lost through diffusion.
 
 <figure markdown>
   ![Forward process](./images/1/forward.png)
   <figcaption>Image modified from source: <a href="https://arxiv.org/abs/2006.11239" title="Ho & al. (2020)"> Ho & al. (2020)</a></figcaption>
 </figure>
 
-Let us define $\mathbf{x}_0$ the original image, $T$ the number of diffusion steps and $t$ an intermediate time step. The noising process from image $t-1$ to $t$ is parametrized by a variance schedule $\beta_t$. Note that $\beta_t \ll 1$ as we want each step to add really little noise.
+Let us define $\mathbf{x}_0$ the original image, $T$ the number of diffusion steps and $t$ an intermediate time step. The noising process from image $t-1$ to $t$ is parametrized by a variance schedule $\beta_t$. Note that $\beta_t \ll 1$ as we want each step to add really little noise $\epsilon$.
 
 $$
 q\left(\mathbf{x}_t|\mathbf{x}_{t-1}\right) = \mathcal{N}\left(\mathbf{x}_t ; \underbrace{\sqrt{1-\beta_t} \mathbf{x}_{t-1}}_{mean}, \underbrace{\beta_t}_{variance} \mathbf{I}\right) \iff \mathbf{x}_t = \sqrt{1-\beta_t} \mathbf{x}_{t-1} + \sqrt{\beta_t} \times \epsilon
@@ -105,9 +105,9 @@ Unfortunately, as often, the posterior is intractable. Bayes' theorem requires t
 
 !!! quote "We need the posterior, but we can't compute it. How do we work around this problem?"
 
-We can't compute the exact posterior, but we can learn a neural network $p_\theta$ to approximate $q(\mathbf{x}_{t-1}|\mathbf{x}_{t})$! If you are familiar with VAEs, training a decoder is the exact same idea.
+We can't compute the exact posterior, but we can learn a neural network $p_\theta$ to approximate $q(\mathbf{x}_{t-1}|\mathbf{x}_{t})$. If you are familiar with VAEs, training a decoder is the exact same idea.
 
-Back in 1949, [Feller](#references) proved that the posterior is also a normal distribution $\mathcal{N}(\mu, \Sigma)$, **if $\beta_t$ is small enough (our case)**! That's great as we can take for granted the posterior normal distribution shape and let the model learn an approximate mean $\mu_\theta(\mathbf{x}_t)$ and approximated variance $\Sigma_\theta(\mathbf{x}_t)$.
+Back in 1949, [Feller](#references) proved that the posterior is also a normal distribution $\mathcal{N}(\mu, \Sigma)$, **if $\beta_t$ is small enough (our case!)** We can thus assume that our posterior can be parametrized by its mean and variance. We train the model to learn an approximate mean $\mu_\theta(\mathbf{x}_t)$ and approximated variance $\Sigma_\theta(\mathbf{x}_t)$.
 
 Once we know the mean and variance of the posterior, starting from $\mathbf{x}_t$, we can sample a candidate $\mathbf{x}_{t-1}$, and then repeat until we reach $\mathbf{x}_0$.
 
@@ -121,7 +121,7 @@ Once we know the mean and variance of the posterior, starting from $\mathbf{x}_t
 
 ## Loss (level 1)
 
-What is the objective function to our problem? We want to estimate the parameters of the reverse probability distribution, given some observed data (our training dataset of $\mathbf{x}_0$ samples). That's a **likelihood maximization** problem! Negative log-likelihood (NLL) is thus the straightforward loss function we gonna minimize.
+What is the objective function to our problem? We want to estimate the parameters of the reverse probability distribution, given some observed data (our training dataset of $\mathbf{x}_0$ samples). That's a **likelihood maximization** problem! Negative log-likelihood (NLL) is thus the straightforward loss function we're going to minimize.
 
 !!! warning "Here comes the hardest part of the paper"
     I will simplify things a bit so you get the intuitions. Then in [Loss level 2](#loss-level-2), I will refine my explanation based on the proof of the paper. So no worries if you feel like some arguments are missing in this section.
@@ -183,7 +183,7 @@ Cross attention was first introduced in [Attention is all you need (2017)](https
 
 The core idea of cross attention is to merge two sequences into one. Using the cross attention mechanism, the context of a sequence $seq_1$ gets infused into a sequence $seq_2$: the output has the same length as $seq_2$.
 
-In DDPM, $seq_1$ could be a text prompt (encoded by a LLM like CLIP). $seq_2$ is the image ... To be more accurate, **the image is chopped into a sequences of subimages** so the attention block can handle it. Thus $seq_2$ is a "patchified" version of the feature map. That is the core idea of Vision Transformers [ViT(2020)](https://arxiv.org/abs/2010.11929). As the output of the cross attention block has the same length as the image, the output fused sequence can be unpatchified to recover the "CNN-like" feature map.
+In DDPM, $seq_1$ could be a text prompt (encoded by a LLM like CLIP). $seq_2$ is the image ... To be more accurate, **the image is chopped into a sequence of subimages** so the attention block can handle it. Thus $seq_2$ is a "patchified" version of the feature map. That is the core idea of Vision Transformers [ViT(2020)](https://arxiv.org/abs/2010.11929). As the output of the cross attention block has the same length as the image, the output fused sequence can be unpatchified to recover the "CNN-like" feature map.
 
 <figure markdown>
   ![Cross attention](./images/1/crossattention.png)
@@ -195,6 +195,12 @@ In DDPM, $seq_1$ could be a text prompt (encoded by a LLM like CLIP). $seq_2$ is
 As we use the same network to denoise at all timesteps, the model needs extra info about the timestep $t$ it is at. In fact, the amount of noise to remove varies a lot through the backward process: a lot at the beginning ($T, T-1, T-2$ ...) but much less at the end (..., $2,1,0$) as it should only polish the final image.
 
 In DDPM, the timestep is specified to the network using the Transformer sinusoidal position embedding from [Attention is all you need (2017)](https://arxiv.org/abs/1706.03762).
+
+---
+
+$\Rightarrow$ **To sum up**, we have a UNet model, enhanced with Attention blocks, that predicts the noise added to an image, conditioned by an input sequence.
+
+---
 
 ## Loss (level 2)
 
@@ -224,7 +230,7 @@ $$
 
 - $L_T$ can be ignored as it doesn't depend on $\theta$, because $\mathbf{x}_T$ is gaussian noise.
 - $L_0$ or reconstruction term, is equivalent to a $L_t$ term after simplification.
-- $L_t$ are KL divergence terms, comparing gaussian univariate distributions $\rightarrow$ Let's see what it is nice!
+- $L_t$ are KL divergence terms, comparing gaussian univariate distributions $\rightarrow$ Let's see why it is convenient!
 
 ### Simplify the KL
 
