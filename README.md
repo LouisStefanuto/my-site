@@ -33,7 +33,7 @@ mkdocs serve
 
 ## 🚀 Deployment
 
-So far, no Github actions have been added to deploy the doc after a merge. Deploy your site manually using:
+Github actions deploy the site o nGithub Pages for you. If you want to deploy manually, use:
 
 ```console
 mkdocs gh-deploy
