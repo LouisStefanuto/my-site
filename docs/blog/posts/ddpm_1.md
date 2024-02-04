@@ -107,7 +107,7 @@ Unfortunately, as often, the posterior is intractable. Bayes' theorem requires t
 
 We can't compute the exact posterior, but we can learn a neural network $p_\theta$ to approximate $q(\mathbf{x}_{t-1}|\mathbf{x}_{t})$! If you are familiar with VAEs, training a decoder is the exact same idea.
 
-Cherry on the cake: back in 1949, [Feller](#references) proved that the posterior is also a normal distribution $\mathcal{N}(\mu, \Sigma)$, **if $\beta_t$ is small enough (our case)**! That's great as we can take for granted the posterior normal distribution shape and let the model learn an approximate mean $\mu_\theta(\mathbf{x}_t)$ and approximated variance $\Sigma_\theta(\mathbf{x}_t)$.
+Back in 1949, [Feller](#references) proved that the posterior is also a normal distribution $\mathcal{N}(\mu, \Sigma)$, **if $\beta_t$ is small enough (our case)**! That's great as we can take for granted the posterior normal distribution shape and let the model learn an approximate mean $\mu_\theta(\mathbf{x}_t)$ and approximated variance $\Sigma_\theta(\mathbf{x}_t)$.
 
 Once we know the mean and variance of the posterior, starting from $\mathbf{x}_t$, we can sample a candidate $\mathbf{x}_{t-1}$, and then repeat until we reach $\mathbf{x}_0$.
 
@@ -146,7 +146,7 @@ So, we can train our network in a supervised learning manner, to predict the nor
 
 At inference time, things are pretty simple. Draw a random noisy sample $\mathbf{x}_T$ from a normal centered distribution. Then predict the mean of the posterior $q(\mathbf{x}_{T-1}\vert\mathbf{x}_T)$. As the posterior's variance is $\beta_T$, we know all the parameters of the posterior: we can sample $\mathbf{x}_{T-1}$.
 
-We then repeat the process $T$ times, slowly changing the variance according to the variance schedule $\beta_s$. At the end of the process, we get our generated image $\mathbf{x}_0$!
+We then repeat the process $T$ times, slowly changing the variance according to the variance schedule $\left(\beta_s\right)_{s \in [0,T]}$. At the end of the process, we get our generated image $\mathbf{x}_0$!
 
 Note that the denoising process is therefore **stochastic**! Starting from one seed, we can get multiple similar outputs!
 
@@ -159,7 +159,7 @@ Note that the denoising process is therefore **stochastic**! Starting from one s
 
     I see two main reasons:
 
-    1. **You make the task easier for the model**. Generating an image from pure noise is hard. To draw a parallel, generating directly is like drawing directly a painting on a blank sheet. When Leonardo Da Vinci painted the Mona Lisa, I am pretty sure he started by sketching the outlines and then refined its painting until it converges to its famous masterpiece. DPPMs do the same and split the generation task into multiple easier refinement sub-tasks.
+    1. **You make the task easier for the model**. Generating an image from pure noise is hard. To draw a parallel, generating directly is like drawing directly a painting on a blank sheet. When Leonardo Da Vinci painted the Mona Lisa, I am pretty sure he started by sketching the outlines and then refined its painting until it converged to its famous masterpiece. DPPMs do the same and split the generation task into multiple easier refinement sub-tasks.
     2. **Each denoising step is stochastic**. The generated image is the product of multiple random actions, so the model can generate multiple outputs from a fixed seed. I guess it is one of the reasons why DDPMs achieve better mode coverage.  That differs from VAEs and GANs, which of course draw a random seed, but their decoder/generative process is then deterministic.
 
 ## Model architecture
@@ -223,11 +223,12 @@ $$
 2 reasons why you should love this expression:
 
 - $L_T$ can be ignored as it doesn't depend on $\theta$, because $\mathbf{x}_T$ is gaussian noise.
-- $L_\text{VLB}$ is mostly KL divergence terms, comparing gaussian univariate distributions.
+- $L_0$ or reconstruction term, is equivalent to a $L_t$ term after simplification.
+- $L_t$ are KL divergence terms, comparing gaussian univariate distributions $\rightarrow$ Let's see what it is nice!
 
 ### Simplify the KL
 
-Infact, after some extensive calculus, one can prove that the posterior conditioned over $\mathbf{x}_0$ - $q(\mathbf{x}_{t-1} \vert \mathbf{x}_t, \mathbf{x}_0)$ - is a also gaussian distribution:
+Infact, after some extensive calculus, one can prove that the posterior conditioned over $\mathbf{x}_0$ - $q(\mathbf{x}_{t-1} \vert \mathbf{x}_t, \mathbf{x}_0)$ - is also a gaussian distribution:
 
 $$
 q(\mathbf{x}_{t-1} \vert \mathbf{x}_t, \mathbf{x}_0) = \mathcal{N}(\mathbf{x}_{t-1}; \tilde{\mu}(\mathbf{x}_t, \mathbf{x}_0), \tilde{\beta}_t \mathbf{I})
