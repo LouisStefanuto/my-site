@@ -1,5 +1,5 @@
 ---
-date: 2023-12-25
+date: 2024-02-01
 authors:
   - LouisStefanuto
 categories:
@@ -8,7 +8,7 @@ categories:
 
 # **Overfit#1:** Denoising Diffusion Probabilistic Models - Basics of Diffusion models
 
-![Image illustrative](./images/1/main.png)
+![Image illustrative](./images/1/main.jpg)
 
 <!-- more -->
 
@@ -121,7 +121,7 @@ Once we know the mean and variance of the posterior, starting from $\mathbf{x}_t
 
 ## Loss (level 1)
 
-What is our objective function for this problem? We want the model to infer the most likely trajectory of samples $\mathbf{x}_0, \mathbf{x}_1, \ldots, \mathbf{x}_{T-1}$ that lead to $\mathbf{x}_T$. That's a **evidence maximization** problem! Negative log-evidence is thus the straightforward loss function we gonna minimize.
+What is the objective function to our problem? We want to estimate the parameters of the reverse probability distribution, given some observed data (our training dataset of $\mathbf{x}_0$ samples). That's a **likelihood maximization** problem! Negative log-likelihood (NLL) is thus the straightforward loss function we gonna minimize.
 
 !!! warning "Here comes the hardest part of the paper"
     I will simplify things a bit so you get the intuitions. Then in [Loss level 2](#loss-level-2), I will refine my explanation based on the proof of the paper. So no worries if you feel like some arguments are missing in this section.
@@ -129,9 +129,9 @@ What is our objective function for this problem? We want the model to infer the 
 In their paper, [Ho & al. (2020)](https://arxiv.org/abs/2006.11239) used 2 tricks to simplify the loss:
 
 - They don't learn the posterior variance. Instead they arbitrarily **fix** it: $\Sigma_\theta(\mathbf{x}_t, t) = \beta_t$.
-- Because (1) $\mathbf{x}_t$ is known at inference time and because (2) $\mu$ and $\epsilon$ are linked by: $\mu_t=\frac{1}{\sqrt{\alpha_t}}\left(\mathbf{x}_t-\frac{1-\alpha_t}{\sqrt{1-\bar{\alpha}_t}} \epsilon_t\right)$, they reparametrize the task, moving from a problem of predicting $\mu$ to **predicting $\epsilon$**.
+- Because (1) $\mathbf{x}_t$ is known at inference time and because (2) $\mu$ and $\epsilon$ are linked by: $\mu_t=\frac{1}{\sqrt{\alpha_t}}\left(\mathbf{x}_t-\frac{1-\alpha_t}{\sqrt{1-\bar{\alpha}_t}} \epsilon_t\right)$, they re-parametrize the task, moving from a problem of predicting $\mu$ to **predicting $\epsilon$**.
 
-Using these tricks, they showed that, maximizing the evidence is roughly equivalent to minimizing a Mean Squared Error (MSE) over the noise added during the forward process:
+Using these tricks, they showed that, maximizing the NLL is roughly equivalent to minimizing a Mean Squared Error (MSE) over the noise added during the forward process:
 
 $$L_t^{\text {simple }}=\mathbb{E}_{t \sim[1, T], \mathbf{x}_0, \mathbf{\epsilon}_t}\left[\left\|\epsilon_t-\epsilon_\theta\left(\mathbf{x}_t, t\right)\right\|^2\right]$$
 
@@ -144,16 +144,23 @@ So, we can train our network in a supervised learning manner, to predict the nor
 
 ## Inference
 
-At inference time, things are pretty simple. Draw a random noisy sample $\mathbf{x}_T$ from a normal centered distribution. Then predict the mean of the posterior $q(\mathbf{x}_{T-1}\vert\mathbf{x}_T)$. As the posterior's variance is $\beta_T$, we now all the parameters of the posterior: we can sample $\mathbf{x}_{T-1}$.
+At inference time, things are pretty simple. Draw a random noisy sample $\mathbf{x}_T$ from a normal centered distribution. Then predict the mean of the posterior $q(\mathbf{x}_{T-1}\vert\mathbf{x}_T)$. As the posterior's variance is $\beta_T$, we know all the parameters of the posterior: we can sample $\mathbf{x}_{T-1}$.
 
 We then repeat the process $T$ times, slowly changing the variance according to the variance schedule $\beta_s$. At the end of the process, we get our generated image $\mathbf{x}_0$!
 
-Note that the denoising process is therefore stochastic! Starting from one seed, we can get multiple similar outputs!
+Note that the denoising process is therefore **stochastic**! Starting from one seed, we can get multiple similar outputs!
 
 <figure markdown>
   ![inference](https://energy-based-model.github.io/Compositional-Visual-Generation-with-Composable-Diffusion-Models/website_files/imgs/videos/example2_N.gif){ width="350" }
   <figcaption>The inference is also stochastic as we draw denoised images step-by-step. Image from <a href="https://energy-based-model.github.io/Compositional-Visual-Generation-with-Composable-Diffusion-Models/" title="inference"> Source</a></figcaption>
 </figure>
+
+!!! quote "Why splitting the generation process into multiple steps? It sounds like over-engineering."
+
+    I see two main reasons:
+
+    1. **You make the task easier for the model**. Generating an image from pure noise is hard. To draw a parallel, generating directly is like drawing directly a painting on a blank sheet. When Leonardo Da Vinci painted the Mona Lisa, I am pretty sure he started by sketching the outlines and then refined its painting until it converges to its famous masterpiece. DPPMs do the same and split the generation task into multiple easier refinement sub-tasks.
+    2. **Each denoising step is stochastic**. The generated image is the product of multiple random actions, so the model can generate multiple outputs from a fixed seed. I guess it is one of the reasons why DDPMs achieve better mode coverage.  That differs from VAEs and GANs, which of course draw a random seed, but their decoder/generative process is then deterministic.
 
 ## Model architecture
 
@@ -163,7 +170,7 @@ DDPMs take an image as input and return a noise of the same shape as output.
 
 This is typical of segmentation problems, in which one wants to classify every single pixel of an image. UNet is thus the straightforward architecture for our problem.
 
-Yet, the vanilla UNet architecture is fully convolutional and can't manage an additional input to condition the denoising process (as a text prompt). That's why [Ho & al. (2020)](https://arxiv.org/abs/2006.11239) used a modified version of UNet called **PixelCNN+** (2017) from [Salimans & al.(2017)](https://arxiv.org/abs/1701.05517), to replace the fully-CNN backbone with a hybrid backbone made of both CNN blocks (ResNet) and Cross attention blocks.
+Yet, the vanilla UNet architecture is fully convolutional and can't manage an additional input to condition the denoising process (as a text prompt). That's why [Ho & al. (2020)](https://arxiv.org/abs/2006.11239) used a modified version of UNet called **PixelCNN+** from [Salimans & al.(2017)](https://arxiv.org/abs/1701.05517), to replace the fully-CNN backbone with a hybrid backbone made of both CNN blocks (ResNet) and Cross attention blocks.
 
 <figure markdown>
   ![Model architecture](https://deepsense.ai/wp-content/uploads/2023/03/Overview-of-U-Net-architecture.jpeg)
@@ -176,16 +183,18 @@ Cross attention was first introduced in [Attention is all you need (2017)](https
 
 The core idea of cross attention is to merge two sequences into one. Using the cross attention mechanism, the context of a sequence $seq_1$ gets infused into a sequence $seq_2$: the output has the same length as $seq_2$.
 
-In DDPM, $seq_1$ could be a text prompt (encoded by a LLM like CLIP). $seq_2$ is the image ... To be more accurate, **the image is chopped into a sequences of subimages** so the attention block can handle it. Thus $seq_2$ is a "patchified" version of the feature map. That is the core idea of Vision Transformers [ViT(2020)](https://arxiv.org/abs/2010.11929).
+In DDPM, $seq_1$ could be a text prompt (encoded by a LLM like CLIP). $seq_2$ is the image ... To be more accurate, **the image is chopped into a sequences of subimages** so the attention block can handle it. Thus $seq_2$ is a "patchified" version of the feature map. That is the core idea of Vision Transformers [ViT(2020)](https://arxiv.org/abs/2010.11929). As the output of the cross attention block has the same length as the image, the output fused sequence can be unpatchified to recover the "CNN-like" feature map.
 
 <figure markdown>
   ![Cross attention](./images/1/crossattention.png)
   <figcaption>Cross attention. Image modified from <a href="https://vaclavkosar.com/ml/cross-attention-in-transformer-architecture" title="crossattention">Vaclav Kosar</a></figcaption>
 </figure>
 
-### Providing the timestep
+### Specify the timestep
 
-As we use the same network to denoise at all timesteps, we should tell the model at which noising step the input image is at. In fact, the amount of noise it should remove varies a lot through the backward process: a lot at the beginning ($T, T-1, T-2$ ...) but much less at the end (..., $2,1,0$) as it should only polish the final image.
+As we use the same network to denoise at all timesteps, the model needs extra info about the timestep $t$ it is at. In fact, the amount of noise to remove varies a lot through the backward process: a lot at the beginning ($T, T-1, T-2$ ...) but much less at the end (..., $2,1,0$) as it should only polish the final image.
+
+In DDPM, the timestep is specified to the network using the Transformer sinusoidal position embedding from [Attention is all you need (2017)](https://arxiv.org/abs/1706.03762).
 
 ## Loss (level 2)
 
@@ -194,7 +203,7 @@ As we use the same network to denoise at all timesteps, we should tell the model
 
 ### ELBO
 
-Like VAEs, the objective function is the evidence, yet it is hard to maximize. A common workaround is to maximize a lower bound called the **ELBO** (Expectation Lower BOund) using Jensen's inequality. In optimization, we usually prefer minimizing things, so we will use the negative log of the evidence instead, and minimize an upper bound $L_\text{VLB}$.
+Like VAEs, the objective function is the likelihood, yet it is hard to maximize. A common workaround is to maximize a lower bound called the **ELBO** (Expectation Lower BOund) using Jensen's inequality. In optimization, we usually prefer minimizing things, so we will use the negative log of the likelihood instead (NLL), and minimize an upper bound $L_\text{VLB}$.
 
 $$
 \begin{aligned}
@@ -205,7 +214,7 @@ $$
 \end{aligned}
 $$
 
-It seems like the ELBO is much more complex than the evidence! But in practice, expanding the sum gives rise to a 3-part expression:
+It seems like the ELBO is much more complex than the NLL! But in practice, expanding the sum gives rise to a 3-part expression:
 
 $$
 L_\text{VLB} = \mathbb{E}_q [\underbrace{D_\text{KL}(q(\mathbf{x}_T \vert \mathbf{x}_0) \parallel p_\theta(\mathbf{x}_T))}_{L_T} + \sum_{t=2}^T \underbrace{D_\text{KL}( \overbrace{q(\mathbf{x}_{t-1} \vert \mathbf{x}_t, \mathbf{x}_0)}^{\text{gaussian}} \parallel \overbrace{p_\theta(\mathbf{x}_{t-1} \vert\mathbf{x}_t)}^{\text{gaussian}} )}_{L_{t-1}} \underbrace{- \log p_\theta(\mathbf{x}_0 \vert \mathbf{x}_1)}_{L_0} ]
@@ -267,24 +276,11 @@ Final move, [Ho & al. (2020)](https://arxiv.org/abs/2006.11239) ditch the normal
 
 You now have a deep understanding of how and why DDPMs work, congrats!
 
-DDPMs are powerful tools that you can now add to your toolkit. Yet they are not the perfect solution either, at least in their vanilla version. Because of their iterative denoising process, DDPMs are slow ... really slow. Researchers are still trying to lower the inference cost and time of DDPMs, for instance by skipping some denoising steps.
+DDPMs are powerful tools that you can now add to your toolkit. Yet they are not the perfect solution either, at least in their vanilla version. Because of their iterative denoising process, DDPMs are slow ... really slow.
 
-Recently many improvements like SDXL or ControlNets brought new capabilities to DDPMs, maybe in a future post? See you there 👋
+Researchers are still trying to lower the inference cost and time of DDPMs, for instance by skipping some denoising steps. More on that in a future post?
 
 ---
-
-## Q&A
-
-!!! quote "Why splitting the generation process into multiple steps? It sounds like over-engineering."
-
-    I see two main reasons:
-
-    1. **You make the task easier for the model**. Generating an image from pure noise is hard. To draw a parallel, generating directly is like drawing directly a painting on a blank sheet. When Leonardo Da Vinci painted the Mona Lisa, I am pretty sure he started by sketching the outlines and then refined its painting until it converges to its famous masterpiece. DPPMs do the same and split the generation task into multiple easier refinement sub-tasks.
-    2. **Each denoising step is stochastic**. The generated image is the product of multiple random actions, so the model can generate multiple outputs from a fixed seed. I guess it is one of the reasons why DDPMs achieve better mode coverage.  That differs from VAEs and GANs, which of course draw a random seed, but their decoder/generative process is then deterministic.
-
-!!! quote "The noising process is really slow. Could we skip a few denoising steps and hope that the network generalization capabilities would counterbalance by removing more noise at each step, thus accelerating the inference?"
-
-    That's an excellent idea, and that's what J. Song & al. (2021) did in [Denoising Diffusion Implicit Models](https://arxiv.org/abs/2010.02502) (DDIM). More on that in the future posts ...
 
 ## References
 
@@ -292,6 +288,8 @@ Recently many improvements like SDXL or ControlNets brought new capabilities to 
 
 [2] Weng, Lilian. ["What are diffusion models?"](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/) (Jul 2021)
 
-[3] Jascha Sohl & al. ["Deep Unsupervised Learning using Nonequilibrium Thermodynamics"](https://arxiv.org/abs/1503.03585)(2015)
+[3] Jascha Sohl & al. ["Deep Unsupervised Learning using Nonequilibrium Thermodynamics"](https://arxiv.org/abs/1503.03585) (2015)
 
 [4] Feller, W. On the theory of stochastic processes, with particular reference to applications, Proceedings of the First Berkeley Symposium on Mathematical Statistics and Probability. (1949)
+
+[5] Vaswani & al. ["Attention is all you need"](https://arxiv.org/abs/1706.03762) (2017)
