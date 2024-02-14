@@ -279,13 +279,11 @@ $\rightarrow$ The authors suppose that bigger text encoders, larger models and d
 ![](./images/2/preferences.png){ width="450" }
 </figure>
 
----
-
-## Conclusion
+### Code example
 
 Stable Diffusion XL has risen as the go-to architecture for [text-to-image generation](https://huggingface.co/models?pipeline_tag=text-to-image) as you can see on HuggingFace. If you feel like experimenting a bit, HuggingFace hosts plenty of amazing fine-tuned models, released by the open-source community. For instance here is some code to run your own SDXL (from the [HuggingFace page of SDXL](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0)).
 
-In the code you will find all we covered in this post:
+You first select a base model and a refiner model:
 
 ```python
 from diffusers import DiffusionPipeline
@@ -307,7 +305,7 @@ refiner = DiffusionPipeline.from_pretrained(
 refiner.to("cuda")
 ```
 
-Define how many steps you want, and what proportion should be run on the refiner:
+You then define how many steps you want, and what proportion should be run on the refiner:
 
 ```python
 # Define how many steps and what % of steps to be run on each experts (80/20) here
@@ -317,7 +315,7 @@ high_noise_frac = 0.8
 prompt = "A majestic lion jumping from a big stone at night"
 ```
 
-Run the predictions, and give the latent output of the base model to the refiner:
+Finally, run the predictions, and give the latent output of the base model to the refiner:
 
 ```python
 # run both experts
@@ -335,12 +333,6 @@ image = refiner(
 ).images[0]
 ```
 
-In a near future, I plan to share some techniques to further speed up the generation process.
+## Conclusion
 
-I hope you enjoyed this reading. If you did, see you in the next one! 👋
-
----
-
-Additional readings:
-
-- Progressive Distillation for Fast Sampling of Diffusion Models
+I hope you enjoyed this reading. In a near future, I plan to share some techniques to further speed up the generation process. So stay connected, and see you in the next one! 👋
