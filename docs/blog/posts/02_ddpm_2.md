@@ -22,9 +22,8 @@ The DDPM paper was published back in 2020: lots of progress has been made since 
 
 !!! note "Table of content"
     - [Improved DDPMs (OpenAI)](#improved-ddpms-openai)
-    - [High-Resolution Image Synthesis with Latent Diffusion Models](#high-resolution-image-synthesis-with-latent-diffusion-models)
     - [Stable Diffusion](#stable-diffusion)
-    - SDXL
+    - [Stable Diffusion XL](#sdxl)
 
 ---
 
