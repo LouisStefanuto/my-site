@@ -4,7 +4,6 @@ authors:
   - LouisStefanuto
 categories:
   - Diffusion models
-draft: true
 ---
 
 # **Overfit#3:** How does Video generation work? - Insights into Stable Video Diffusion
