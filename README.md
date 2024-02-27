@@ -33,7 +33,7 @@ mkdocs serve
 
 ## 🚀 Deployment
 
-Github actions deploy the site o nGithub Pages for you. If you want to deploy manually, use:
+This repo supports automatic deployment, using Github Workflows. If you want to deploy manually, use:
 
 ```console
 mkdocs gh-deploy
