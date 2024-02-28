@@ -26,7 +26,7 @@ Well, in practice, yes. A video comprises a sequence of images, displayed at 30 
 
 - **How to enforce a high consistency between frames?** Text-to-image models lack temporal understanding, so generating frames that logically follow one another is crucial.
 - **How to reduce the insane computational cost?** Producing just one second of video equates to generating 30 frames. For a minute-long video, that's a staggering 900 frames... I hope your credit card is within reach. Your bank adviser won't appreciate what is gonna happen.
-- **What dataset to use?** Unlike text or images, there are far fewer open datasets available for videos. Moreover, many long videos contain editing cuts that diminish their suitability for training purposes.
+- **What dataset to use?** Unlike text or images, there are far fewer high-quality open datasets.
 
 <figure markdown>
   ![Stable Video Diffusion](https://media1.tenor.com/m/rhzC9_tMUukAAAAd/will-smith-eating-spaghetti-will-smith.gif){ width="350" }
@@ -50,14 +50,14 @@ Unfortunately, as of early 2024, many video-generation models remain proprietary
 
 ## Latent Video Diffusion Models
 
-To train a image-to-video model, most approaches converged to a **three-step** training process:
+To train an video generation model, most approaches converged to a **three-step** training process:
 
 1. **Text-to-image pretraining**: Pretrain a text-to-image model (Stable Diffusion 2.1 for ex.) to generate images. This step is optional, but research indicates that it yields significantly improved results. This is logical, as leveraging the knowledge from the image dataset enhances performance.
 2. **Text-to-video pretraining**: Add intermediate temporal layers in the pretrained text-to-image model, and train it as before but on a large video dataset, to align images in a temporally consistent manner.
 3. **Text-to-video finetuning**: Same as (2) but use a higher resolution dataset, to finetune the super resolution modules.
 
 !!! note "For your information ..."
-     I already covered step 1 in two posts about how to train a text-to-image model: [**#1-DDPM**](./01_ddpm_1.md) and [**#2-SDXL**](./02_ddpm_2.md). In the following sections, **I will focus on steps 2 and 3**: how to turn a text-to-image pretrained model into a image-to-video model.
+     I already covered step 1 in two posts about how to train a text-to-image model: [**#1-DDPM**](./01_ddpm_1.md) and [**#2-SDXL**](./02_ddpm_2.md). In the following sections, **I will focus on steps 2 and 3**: how to turn a text-to-image pretrained model into an image-to-video model.
 
 ### Temporal layers
 
@@ -117,7 +117,7 @@ In ["Align your Latents" (2023)](https://arxiv.org/abs/2304.08818), the authors 
 
         Yes, but only the decoder. In [Align your Latents](https://arxiv.org/abs/2304.08818), the authors stress out that adding temporal layers to the decoder is key. Indeed, "the autoencoder of the LDM is trained on images only, causing flickering artifacts when encoding and decoding a temporally coherent sequence of images." It makes sense as even if the latent representations of all frames are close in the embedding space, the decoder may decode them slightly differently, causing artifacts.
 
-      - **I see there are many reshape operations. Why is the batch reshaped so many times?**
+      - **I notice there are many reshape operations. Why is the batch reshaped so many times?**
 
         Each sub-block expects a different input. Either independent frames, or videos, or pixel values sequences. Hopefully, as all training videos have the same number of frames $T$ and the same frame dimensions ($H \times W \times C$), switching from a format to another is a simple `np.reshape` (or equivalent) operation.
 
@@ -128,7 +128,7 @@ In ["Align your Latents" (2023)](https://arxiv.org/abs/2304.08818), the authors 
 
 ### Mask conditioning
 
-Temporal layers allow us to transform our pretrained text-to-image model into a image-to-video model capable of producing short videos, made of a few frames. However,  ["Align your Latents" (2023)](https://arxiv.org/abs/2304.08818) has demonstrated that **this approach faces limitations when attempting to generate longer videos** with a greater number of frames.
+Temporal layers allow us to transform our pretrained text-to-image model into an image-to-video model capable of producing short videos, made of a few frames. However,  ["Align your Latents" (2023)](https://arxiv.org/abs/2304.08818) has demonstrated that **this approach faces limitations when attempting to generate longer videos** with a greater number of frames.
 
 One method to overcome this limitation is to train the model to generate frames conditioned on the preceding frames of the sequence. This approach involves generating an initial short video and then generating subsequent videos using the last frames of the preceding video sequence. This iterative process can be repeated to extend the length of the generated video content.
 
@@ -192,7 +192,7 @@ Then, they rigorously filtered this huge dataset. Their filtering process involv
 
 > $\rightarrow$ The extent of the filtering process varied depending on the level of selectivity applied. Consequently, their final datasets ranged from containing 152M to 2.3M videos, 300 frames/video on average i.e ~10sec/video.
 
-!!! success "Let's not forget it: garbage in, garbage out."
+!!! success "Let's keep in mind: garbage in, garbage out."
 
 ---
 
