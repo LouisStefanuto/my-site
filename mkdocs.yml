@@ -43,6 +43,7 @@ markdown_extensions:
   # to add LateX
   - pymdownx.arithmatex:
       generic: true
+  - footnotes
 
 extra_javascript:
   - javascripts/mathjax.js
