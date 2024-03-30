@@ -8,7 +8,7 @@ categories:
 
 # **Overfit#4:** All the techniques to control your text2img models: ControlNets, T2I-Adapters, Dreambooth ...
 
-![](./images/6/main.jpg)
+![](./images/4/main.jpg)
 
 <!-- more -->
 
@@ -35,7 +35,7 @@ We would like a model that:
 > Hopefully, some clever people already answered this question for you. Let's dive in! 🐠
 
 <figure markdown>
-  ![Conditions](./images/6/conditioning_examples.png)
+  ![Conditions](./images/4/conditioning_examples.png)
   <figcaption>We would like to condition the model on any input that could guide the image generation.</figcaption>
 </figure>
 
@@ -52,7 +52,7 @@ And their method worked because they had a big finetuning dataset. What if you r
 > Finetuning is a dead-end, except for a happy few. We need something smoother and cheaper than finetuning.
 
 <figure markdown>
-![deer finetuning](./images/6/deer.jpg)
+![deer finetuning](./images/4/deer.jpg)
 <figcaption>In a finetuning approach, one would train all the weights, both the pre-trained ones and the added ones.</figcaption>
 </figure>
 
@@ -69,7 +69,7 @@ In February 2023, within a one-week time frame, two distinct teams from Standfor
 The key idea behind ControlNets is to duplicate the model into (1) a **frozen** original model and (2) a **trainable** copy. The trainable copy will learn to take the condition $c$ as an additional input. As its feature maps have the same shape as the original network, we will add them to the original feature maps to **control the generation process**. Note that the condition $c$ is the output of a feature extractor - usually a CNN (not represented in the figure below), that must be trained too.
 
 <figure markdown>
-![controlnet](./images/6/controlnet_simple.png){ width="400" }
+![controlnet](./images/4/controlnet_simple.png){ width="400" }
 <figcaption>From the ControlNet paper [1]</figcaption>
 </figure>
 
@@ -84,7 +84,7 @@ Then, as the training goes on, the zero-conv layers slowly learn to guide the fr
 The previous figure was pretty conceptual, here is what it looks like in practice on a Stable Diffusion architecture:
 
 <figure markdown>
-![controlnet](./images/6/controlnet.png){ width="350" }
+![controlnet](./images/4/controlnet.png){ width="350" }
 <figcaption>The ControlNet architecture for a Stable Diffusion model. From the ControlNet paper [1]</figcaption>
 </figure>
 
@@ -128,7 +128,7 @@ But the key difference is that **the trainable part is no longer a copy** of the
 This simpler architecture requires much less resources as the trainable model is much smaller.
 
 <figure markdown>
-![t2i](./images/6/t2i.png){ width="600" }
+![t2i](./images/4/t2i.png){ width="600" }
 <figcaption>The architecture of the T2I-Adapters. From [2].</figcaption>
 </figure>
 
@@ -193,7 +193,7 @@ Dreambooth is not perfect either, the paper mentions some pitfalls. For instance
 </figure>
 
 <figure markdown>
-![dreambooth-example](./images/6/issues-dreambooth.png){ width="500" }
+![dreambooth-example](./images/4/issues-dreambooth.png){ width="500" }
 <figcaption>In some cases, Dreambooth performs poorly. From [3].</figcaption>
 </figure>
 
