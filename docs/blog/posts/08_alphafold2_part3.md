@@ -15,7 +15,7 @@ categories:
 <!-- more -->
 
 !!! note "Before you start"
-    This post is the third episode of a series about the AlphaFold2 paper. If you didn't already, I highly recommend to read the previous posts first:
+    This post is the third episode of a series about the AlphaFold2 paper. If you haven't already, I highly recommend to read the previous posts first:
 
     1. [Intro: The protein folding problem](./06_alphafold2_part1.md)
     2. [Part 1: The Evoformer network](./07_alphafold2_part2.md)
@@ -37,7 +37,7 @@ A protein is a linear sequence of residues. Each residue brings with 3 atoms (2 
 
 AlphaFold splits the structure prediction task into 2 steps:
 
-1️⃣ First AF2 ignores the side-chains and focuses on the residue backbone. It predicts the translation and the rotation to move from a residue to the next (blue triangles).
+1️⃣ First AF2 ignores the side chains and focuses on the residue backbone. It predicts the translation and the rotation to move from one residue to the next (blue triangles).
 
 !!!quote ""
     <figure markdown>
@@ -50,7 +50,7 @@ AlphaFold splits the structure prediction task into 2 steps:
     <figcaption>In AlphaFold, the only degrees of freedom are the torsion angles. The length of the bonds and the angle they make with each other are fixed. The blue triangle are the triangles formed by the 3 backbone atoms of the residue. The degrees of freedom of the side chains are displayed as green circles.</figcaption>
     </figure>
 
-2️⃣ Second, the model refines it prediction. It considers the protein as a rigid body, whose only degrees of freedom are the 3 torsion angles of the backbone and the 4 torsion angles of the side chain, per residue.
+2️⃣ Second, the model refines its prediction. It considers the protein as a rigid body, whose only degrees of freedom are the 3 torsion angles of the backbone and the 4 torsion angles of the side chain, per residue.
 
 > 👉 Ultimately, AlphaFold predicts the 7 angles for each residue. By composing the local transformations, we can then recover the 3D shape of the protein in the global frame.
 
@@ -64,7 +64,7 @@ AlphaFold splits the structure prediction task into 2 steps:
 
 ## Structure network
 
-The **structure network** is a 8-block submodule, with shared weights, that converts the pair-wise representation and the first row of the MSA representation into a 3D structure prediction.
+The **structure network** is an 8-block submodule, with shared weights, that converts the pair-wise representation and the first row of the MSA representation into a 3D structure prediction.
 
 <figure markdown>
 ![structure](./images/8/structure-prediction.png)
@@ -75,14 +75,14 @@ We can split the structure prediction into 3 steps.
 
 1. **The IPA module**: an equivariant transformer that compresses information from the MSA, the pair representation and the backbone frames into one vector.
 2. **The backbone structure prediction**: This module updates the coarse guess of the protein backbone = task 1️⃣
-3. **The atom-wise structure prediction**: In this last module, AlphaFold refines its backbone prediction and predicts the angles of each residue side chains (denoted as $\chi$ angles on the figure) = task 2️⃣.
+3. **The atom-wise structure prediction**: In this last module, AlphaFold refines its backbone prediction and predicts the angles of each residue side chain (denoted as $\chi$ angles on the figure) = task 2️⃣.
 
 ### IPA module
 
 !!! warning
     It sounds like a beer, but it's not. 🍺
 
-The IPA - **Invariant Point Attention** - module is the engine of the structure network. It takes as inputs the 3 representations of the protein: the single MSA representation + the pair representation + the frames (the blue triangles). It returns an updated single representation embedding. This will serve as inputs to the predictors later.
+The IPA - **Invariant Point Attention** - module is the engine of the structure network. It takes as inputs the 3 representations of the protein: the single MSA representation + the pair representation + the frames (the blue triangles). It returns an updated single representation embedding. This will serve as input to the predictors later.
 
 In a nutshell, it is a classic global attention block, equivariant to global frame transformations (translations/rotations).
 
@@ -115,7 +115,7 @@ The output of the backbone prediction module (in purple in the figure) is a quat
 
 ### Atom-wise prediction
 
-In the end, a shallow ResNet predicts the $\cos$ and $\sin$ of each torsion angle. This approach avoids the discontinuity encountered with direct predictions in $[0, 2\pi]$. An auxiliary loss also encourages an unit norm of the raw vector.
+In the end, a shallow ResNet predicts the $\cos$ and $\sin$ of each torsion angle. This approach avoids the discontinuity encountered with direct predictions in $[0, 2\pi]$. An auxiliary loss also encourages a unit norm of the raw vector.
 
 Extra work is also required to disambiguate rigid groups that are symmetric, and for which multiple structures are acceptable equivalent solutions.
 
@@ -127,11 +127,11 @@ To train AlphaFold2, the DeepMind's team came up with a **multi-term loss** func
 
 $$\mathcal{L} = 0.5 \mathcal{L}_{FAPE} + 0.5 \mathcal{L}_{aux} + 0.3 \mathcal{L}_{dist} + 2.0 \mathcal{L}_{msa} + 0.01 \mathcal{L}_{conf}$$
 
-The **main loss** term is the **FAPE**, a home-made loss from DeepMind. The FAPE (Frame Aligned Point Error) assesses the atom coordinates and compares their distance to the ground truth, somehow like a L2 loss term. It also has some cool properties like non-invariance to reflection so it avoids creating proteins of the wrong chirality.
+The **main loss** term is the **FAPE**, a homemade loss from DeepMind. The FAPE (Frame Aligned Point Error) assesses the atom coordinates and compares their distance to the ground truth, somehow like a L2 loss term. It also has some cool properties like non-invariance to reflection so it avoids creating proteins of the wrong chirality.
 
-In theory it should be the only loss term, but apparently auxiliary losses were needed to achieve better/faster/more interpretable training. Each auxiliary loss has a purpose:
+In theory, it should be the only loss term, but auxiliary losses were needed to achieve better/faster/more interpretable training. Each auxiliary loss has a purpose:
 
-- $\mathcal{L}_{aux}$ is a mixture of the FAPE and of the torsion angle loss over the intermediate results. It constraints the model prediction to converge fast.
+- $\mathcal{L}_{aux}$ is a mixture of the FAPE and of the torsion angle loss over the intermediate results. It constrains the model prediction to converge fast.
 - $\mathcal{L}_{dist}$ is a distogram loss. It puts constraints on the distance between atoms, to make sure the pair representation is useful and meaningful.
 - $\mathcal{L}_{msa}$ is a BERT-like loss. It is an averaged cross-entropy loss for masked MSA prediction (the Evoformer is trained to complete some masked elements of the MSA during training).
 - $\mathcal{L}_{conf}$ is a small loss over the confidence level (pLDDT value) of the model. More on that in the [Interpretability](#interpretability) section.
@@ -146,12 +146,12 @@ AlphaFold2 is better thanks to its architecture, but also **thanks to its data**
 
 One major advantage of AlphaFold2 over the previous methods is that it leverages datasets of sequences with unknown structures. The technique is called **self-distillation** (not invented by the AF2 paper).
 
-1. Train a teacher model on labelled data
+1. Train a teacher model on labeled data
 2. Use the teacher to label unlabeled data
-3. Train a student model on the labelled data + the newly labelled data points with the highest confidence scores
+3. Train a student model on the labeled data + the newly labeled data points with the highest confidence scores
 4. Repeat the process.
 
-Thanks to self-distillation, AlphaFold2 trained on an additional 350k structures, i.e **75% of the training dataset**! Intuitively, one may think it would lead to model collapse, but the ablation study shows it boosts performance.
+Thanks to self-distillation, AlphaFold2 trained on an additional 350k structures, i.e. **75% of the training dataset**! Intuitively, one may think it would lead to model collapse, but the ablation study shows it boosts performance.
 
 <figure markdown>
 ![structure](./images/8/self-distillation.png){width="400"}
@@ -162,7 +162,7 @@ Thanks to self-distillation, AlphaFold2 trained on an additional 350k structures
 
 Additionally, the model is trained to **estimate the error** it makes for each residue frame. That's the last small auxiliary term in the loss $\mathcal{L}_{conf}$, that compares the error to the predicted error.
 
-I find it really clever, because it provides some empirical estimation of how confident AlphaFold2 is about its prediction, for each residue. For instance, the authors observed a strong correlation between low plDDT scores and parts of the protein that have dynamic structures (and thus no clear ground truth).
+I find it clever, because it provides some empirical estimation of how confident AlphaFold2 is about its prediction, for each residue. For instance, the authors observed a strong correlation between low plDDT scores and parts of the protein that have dynamic structures (and thus no clear ground truth).
 
 !!! quote ""
     <figure markdown>
@@ -177,13 +177,13 @@ As mentioned earlier, AlphaFold is a sandwich of Evoformer blocks and Structure 
 ---
 
 !!! note "Conclusion"
-    AlphaFold2's impact on the field makes no doubt: at CASP15, all best performing models were improved versions of AF2.
+    AlphaFold2's impact on the field makes no doubt: at CASP15, all best-performing models were improved versions of AF2.
 
-    But there is still room for improvements. In fact, a few weeks ago, DeepMind released [Alphafold3](https://www.nature.com/articles/s41586-024-07487-w), a new diffusion-based model that claims to outperform AF2 by a significant margin. I can't wait to dive into the paper ...
+    But there is still room for improvement. A few weeks ago, DeepMind released [Alphafold3](https://www.nature.com/articles/s41586-024-07487-w), a new diffusion-based model that claims to outperform AF2 by a significant margin. I can't wait to dive into the paper ...
 
-    I only covered a small part of all the brilliant ideas of AlphaFold2. If you are looking for more, like how the data was processed or the engineering secrets of DeepMind, I definitively recommend the supplementary paper that comes with the Nature's paper [^5]. It is long but rich!
+    I only covered a small part of all the brilliant ideas of AlphaFold2. If you are looking for more, like how the data was processed or the engineering secrets of DeepMind, I definitively recommend the supplementary paper that comes with Nature's paper [^5]. It is long but rich!
 
-    👋 That's all for today. Feel free to share if you appreciated the content. And I see you in the next one!
+    👋 That's all for today. Feel free to share if you appreciate the content. And I see you in the next one!
 
 [:material-arrow-left-circle: The Evoformer](./07_alphafold2_part2.md){ .md-button }
 [Menu :material-arrow-right-circle:](../index.md){ .md-button .md-button--primary }
