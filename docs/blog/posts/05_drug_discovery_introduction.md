@@ -5,7 +5,6 @@ authors:
 categories:
   - Drug Discovery
   - Chemistry
-  - Applied AI
 ---
 
 # **Overfit#5:** AI for drug discovery: An introduction
