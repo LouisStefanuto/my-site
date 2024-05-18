@@ -16,13 +16,13 @@ categories:
 
 ## The protein folding problem
 
-Proteins are molecular machines that are **essential to life**. Just to name a few examples: hemoglobin (a protein) carries oxygen in our blood, our immune system fights bacteria using antibodies (proteins), our hair are made of keratine (a protein) ...
+Proteins are molecular machines that are **essential to life**. Just to name a few examples: hemoglobin (a protein) carries oxygen in our blood, our immune system fights bacteria using antibodies (proteins), our hair is made of keratine (a protein) ...
 
-At the atom scale, proteins are **linear chains of amino acids**, small molecules which act as building blocks. Note that there is a limited number of amino acids (20). That means that with these 20 simple building blocks, you can build any possible protein. Amino-acids are often called **residues**.
+At the atom scale, proteins are **linear chains of amino acids**, small molecules which act as building blocks. Note that there is a limited number of amino acids (20). That means that with these 20 simple building blocks, you can build any possible protein. Amino acids are often called **residues**.
 
 > 🧬 In a nutshell, a protein is a word from a 20-letter alphabet.
 
-Proteins have hydrophilic residues (that like water) and hydrophobic residues (that dislike water). To minimize the contact surface of the latter with water, **proteins fold and twist** to hide their hydrophobic regions. Thus, the linear chain linear chain of amino-acids takes a 3D complex structure, a bit like a spaghetti knot.
+Proteins have hydrophilic residues (that like water) and hydrophobic residues (that dislike water). To minimize the contact surface of the latter with water, **proteins fold and twist** to hide their hydrophobic regions. Thus, the linear chain of amino acids takes a 3D complex structure, a bit like a spaghetti knot.
 
 <figure markdown>
 ![structure](https://www.open.edu/openlearncreate/pluginfile.php/607232/mod_page/content/5/TP3.png){width="600"}
@@ -51,16 +51,16 @@ Here is for instance the go-to approach used for most of the structures known to
 
 !!! quote "The wet lab approach seems intractable at scale. Could we instead solve this problem computationally?"
 
-Simulating proteins with physics-based approaches is **out-of-reach** for massive use. In fact, one has to compute the dynamics of the protein, take into account all the interactions between thousands of atoms, at the femtosecond scale. Computational chemists already struggle with small molecules, imagine with entire proteins ...
+Simulating proteins with physics-based approaches is **out-of-reach** for massive use. In fact, one has to compute the dynamics of the protein, and take into account all the interactions between thousands of atoms, at the femtosecond scale. Computational chemists already struggle with small molecules, imagine with entire proteins ...
 
 !!! note ""
     Now that the plot is in place, let's talk a bit about AI, and discover how **Google Deep Mind** (almost) cracked this 50-year problem.
 
 ## CASP14, the break-even
 
-Protein folding is nothing new, scientists have been working on it for decades. Indeed, to accelerate scientific research, the protein folding community even has its own biannual competition: the Critical Assessment of Structure Prediction or **CASP**.
+Protein folding is nothing new, scientists have been working on it for decades. Indeed, to accelerate scientific research, the protein folding community even has its biannual competition: the Critical Assessment of Structure Prediction or **CASP**.
 
-Every two years, the CASP organizers release the sequences of proteins whose 3D structures have been found but not published yet (it acts as a private test dataset). Any researcher is free to submit its structure predictions. The predictions are then compared to the wet lab results to determine which algorithm performs the best.
+Every two years, the CASP organizers release the sequences of proteins whose 3D structures have been found but not published yet (it acts as a private test dataset). Any researcher is free to submit their structure predictions. The predictions are then compared to the wet lab results to determine which algorithm performs the best.
 
 In 2020, at the 14th edition of CASP (CASP14) a team from Google DeepMind achieved incredible results, beating all their competitors by a **MASSIVE** margin.
 
@@ -77,7 +77,7 @@ With AlphaFold2, DeepMind introduced an end-to-end model that takes as input a s
 
 ![](https://borisburkov.net/static/aaf883e0fa115ba6ac38a9771251c69a/f4fee/AF2_bird_eye_view.webp)
 
-In this series of posts, we will dive together in the architectural and training tricks that make AlphaFold2 such a success. Step-by-step, we will decipher the secrets of **AlphaFold2, a gemstone of engineering**.
+In this series of posts, we will dive together into the architectural and training tricks that make AlphaFold2 such a success. Step by step, we will decipher the secrets of **AlphaFold2, a gemstone of engineering**.
 
 !!! note "Table of content"
     1. [Intro: The protein folding problem](./06_alphafold2_part1.md) (you are here)
