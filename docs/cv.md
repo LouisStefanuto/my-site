@@ -1,7 +1,8 @@
 # CV
 
+[👉 Download **PDF Version** (more recent) 🇬🇧 👈](artifacts/CV_STEFANUTO_Louis_UK.pdf){ .md-button .md-button--primary }
+
 [👉 Download **PDF Version** 🇫🇷 👈](artifacts/CV_STEFANUTO_Louis_FR.pdf){ .md-button }
-[👉 Download **PDF Version** 🇬🇧 👈](artifacts/CV_STEFANUTO_Louis_UK.pdf){ .md-button .md-button--primary }
 
 ## 🇫🇷 About
 
