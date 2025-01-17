@@ -163,12 +163,12 @@ Another major difference with SimCLR is the absence of an explicit repulsive/con
 
 ### Patch-level loss (iBOT)
 
-The DINO loss ensures that the image-level embeddings are meaningful, but what about the patch embeddings? In an ideal setup, it would be nice that similar (resp. dissimilar) parts of an image have similar (resp. dissimilar) embeddings. For instance, meaningful and diverse patch embeddings would enable out-of-the-box segmentation of an image. Or finding the most similar patch of an image to find a similar patch in another ... This is the intuition behind the **iBOT** loss (Image BERT pre-training with online tokenizer[^5]).
+The DINO loss ensures that the image-level embeddings are meaningful, but what about the patch embeddings? In an ideal setup, it would be nice that similar (resp. dissimilar) parts of an image have similar (resp. dissimilar) embeddings. For instance, meaningful and diverse patch embeddings would enable out-of-the-box segmentation of an image. Or finding the most similar patches in two images ... This is the intuition behind the **iBOT** loss (Image BERT pre-training with online tokenizer[^5]).
 
 !!! quote ""
     <figure markdown>
     ![ibot](./images/9/ibot.png){width=500}
-    <figcaption>iBOT uses two views and then predict the masked tokens of the other view.</figcaption>
+    <figcaption>iBOT uses two views and then predicts the masked tokens of the other view.</figcaption>
     </figure>
 
 > **Paper:** We randomly mask some of the input patches given to the student, but not to the teacher. We then apply the student iBOT head to the student mask tokens. Similarly, we apply the teacher iBOT head to the (visible) teacher patch tokens corresponding to the ones masked in the student. We then apply the softmax and centering steps as above, and obtain the iBOT loss term.
@@ -286,11 +286,11 @@ $$
 
 where $u$ and $v$ are renormalization vectors in $\mathbb{R}^K$ and $\mathbb{R}^B$ respectively. These vectors are computed  using the iterative **Sinkhorn-Knopp** algorithm, which gives the centering technique its name.
 
-!!! success "SwAV aims at simultaneously learning meaningful clusters and then train a model to assign the image features to the same cluster whatever the transformation applied to the image. The target cluster is computer online using the SK algorithm from the image embedding and the learned clusters."
+!!! success "SwAV aims at simultaneously learning meaningful clusters and then train a model to assign the image features to the same cluster whatever the transformation applied to the image. The target cluster is computed online using the SK algorithm from the image embedding and the learned clusters."
 
 > How is the problem reformulated in practice?
 
-SwAV uses a finite set of prototypes ($C$), learnable parameters that act as centroids summarizing the feature space. These prototypes project features ($Z$) into codes ($Q$), representing soft cluster assignments. The codes indicate the similarity between features and prototypes (as shown in the expression for $\mathcal{Q}^*$).
+SwAV uses a finite set of prototypes ($C$), learnable parameters that act as centroids summarizing the feature space. These prototypes project features ($Z$) into codes ($Q$), representing soft cluster assignments. The codes indicate the similarity between features and prototypes (as shown in the expression for $Q^*$).
 
 The **core idea** is to predict the code (cluster assignment) of one augmented view using the features from another view (that is the **swap** of **Sw**AV). This ensures that representations are invariant to augmentations while being semantically meaningful.
 
@@ -302,7 +302,7 @@ $$
 \mathcal{L} = H(z^{t}_1, q^{t}_2) / 2 + H(z^{t}_2, q^{t}_1) / 2,
 $$
 
-where: $H$ is the cross-entropy loss, $z^{t}$ are the high-quality embeddings, $q^{t}$ are cluster assignments (codes) from the student features.
+where: $H$ is the cross-entropy loss, $z^{t}$ are the features, $q^{t}$ are cluster assignments (codes) from the features.
 
 In simple terms, the first term aligns the teacher’s embedding of view 1 ($z_1^{t}$) with the cluster assignment ($q_2^{s}$) of view 2. The second term swaps the roles of view 1 and view 2. This swapping mechanism maps both views to consistent clusters, enforcing augmentation invariance.
 
@@ -344,18 +344,18 @@ To compute similarities between queries and uncurated images, DINOv2's authors u
 
 In addition to its complex training process, DINOv2 benefits from implementation tips, to maximize training efficiency.
 
-- **NN architecture optimization**: Hidden-layer dimension carefully chosen maximize GPU usage (depends on the GPU memory specs)
+- **NN architecture optimization**: Hidden-layer dimension carefully chosen to maximize GPU usage (depends on the GPU memory specs)
 - **Sequence packing**: DINO uses crops of images during training. This results in varying sequence input sizes. To maximize the training efficiency, the sequence are packed (concatenated) together. A block-wise mask is then added in the attention mechanism to ensure sequence independence. This technique is similar to NLP packing techniques.
-- **Efficient stochastic depth**: When training in a MAE manner, time is lost computing masked tokens. Their implementation skips these calculations, thanks to kernel operation fusion. The higher the dropout rate, the bigger the acceleration.
+- **Efficient stochastic depth**: When training in a MAE manner, time is lost computing masked tokens. Their implementation skips these calculations, thanks to kernel operation fusion. The higher the drop rate, the bigger the acceleration.
 - **Fully-Sharded Data Parallel (FSDP)**: Parallelized training across multiple GPUs, using a mix of float32/16 reduce operations to reduce the communication overhead between GPUs (more on training parallelization in future posts ...).
 
 ## Results
 
-I won't dive into the benchmark results of DINOv2, the paper does it much better. Instead, what I would like to highlight the interesting emerging properties to highlight the versatility of DINOv2 for downstream tasks and give an example of industrial usage.
+I won't dive into the benchmark results of DINOv2, the paper does it much better. Instead, I would like to highlight the versatility of DINOv2 for downstream tasks and give an example of industrial usage on other datasets.
 
 **Out-of-the-box Segmentation**
 
-One striking example of DINOv2’s capabilities is its ability to perform object segmentation directly from embeddings. By simply applying Principal Component Analysis (PCA) to the feature maps and thresholding the leading principal component, DINOv2 can segment objects with remarkable accuracy. This approach was showcased in the paper using a video of a dog, where the model was able to segment the dog in each frame with high precision, purely based on its learned embeddings.
+One striking example of DINOv2’s capabilities is its ability to perform object segmentation directly from embeddings. By simply applying Principal Component Analysis (PCA) to the feature maps and thresholding the leading principal component, DINOv2 can segment the main object in the frame with remarkable accuracy. This approach was showcased in the paper using a video of a dog, where the model was able to segment the dog in each frame with high precision, purely based on its learned embeddings.
 
 By visualizing the top three PCA components as an RGB image, they also observed that similar regions in the image have similar colors. This consistency in color highlights the model's ability to cluster similar patches together, indicating that segmentation out-of-the-box with a simple linear layer should be possible and effective.
 
@@ -374,7 +374,7 @@ DINOv2 goes beyond simple image classification and segmentation. It shows a deep
 
 **Community Adoption**
 
-The power and versatility of DINOv2 have led to its rapid adoption in various domains. One notable example is bio-medical imaging. [H-Optimus-0](https://github.com/bioptimus/releases/tree/main/models/h-optimus/v0?utm_source=owkin&utm_medium=referral&utm_campaign=h-bioptimus-o) is a model trained on Whole Slide Images (WSI), released by Bioptimus. It achieves top-1 on most downstream histopathology-related tasks. Microsoft also released [RAD-DINO](https://huggingface.co/microsoft/rad-dino) a vision transformer model trained to encode chest X-rays.
+The power and versatility of DINOv2 have led to its rapid adoption in various domains. One notable example is bio-medical imaging. [H-Optimus-0](https://github.com/bioptimus/releases/tree/main/models/h-optimus/v0?utm_source=owkin&utm_medium=referral&utm_campaign=h-bioptimus-o) is a model trained on Whole Slide Images (WSI), released by Bioptimus. It achieves top-1 on most downstream histopathology-related tasks. Microsoft also released [RAD-DINO](https://huggingface.co/microsoft/rad-dino) a vision transformer model trained to encode chest X-rays. RAD-DINO is one of the most downloaded feature extraction model on HuggingFace.
 
 These applications underscore the robustness of DINOv2 and its suitability for pre-training on large, diverse datasets.
 
