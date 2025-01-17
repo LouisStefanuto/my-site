@@ -60,7 +60,7 @@ And their method worked because they had a big finetuning dataset. What if you r
 
 This issue pushed research to find out parameter-efficient methods to learn a new conditioning input, without losing the power of the txt2img pre-trained model.
 
-In February 2023, within a one-week time frame, two distinct teams from Standford (USA) and Tencent (China) published papers with similar ideas, **ControlNets** and **Text2Image-Adapters** (T2I).
+In February 2023, within a one-week time frame, two distinct teams from Standford (USA) and Tencent (China) published papers with similar ideas, **ControlNets**[^1] and **Text2Image-Adapters**[^2] (T2I).
 
 ### ControlNets
 
@@ -165,7 +165,7 @@ A simple approach is to finetune the model on a few images, such that it learns 
 <figcaption>Given some input images of the bag, we would like to generate new images of it, in new contexts [3].</figcaption>
 </figure>
 
-Hopefully, researchers found out some smart workarounds, like 🌟 **DreamBooth** 🌟.
+Hopefully, researchers found out some smart workarounds, like 🌟 **DreamBooth**[^3][^5] 🌟.
 
 The key idea of Dreambooth is to finetune the diffusion U-Net and the text2embedding model to **learn a new token for your concept by coupling it to a class** that is a coarse synonym of your concept. For instance, instead of learning on text labels like "[V] in the Grand Canyon", "[V] in the city of Versailles" ... you would instead train the network on descriptions like "a [V] **backpack** in the Grand Canyon", "a [V] **backpack** in the city of Versailles". This helps the model create an identifier token, using some **prior**.
 

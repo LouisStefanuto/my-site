@@ -69,7 +69,7 @@ By leveraging AI technologies, experts in biology can streamline the identificat
 
 ## The main applications of AI in drug discovery
 
-Now that we covered the competitive edge of AI, let's see how AI could accelerate research, with tangible examples.
+Now that we covered the competitive edge of AI, let's see how AI could accelerate research, with tangible examples[^1][^2].
 
 Since the beginning of this post, I introduced in-silico drug discovery as a monolithic task. Yet, in practice, it is a **multi-step** process. The first challenge is to get a fine-grained knowledge of how the disease works, to then choose the best step in the biological process to act on. Next, we need to find a molecule that binds properly to the target protein. Finally, we need to double-check for potential side effects of the compound.
 

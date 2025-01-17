@@ -15,7 +15,7 @@ categories:
 <!-- more -->
 
 !!! note "Before you start"
-    This post is the third episode of a series about the AlphaFold2 paper. If you haven't already, I highly recommend to read the previous posts first:
+    This post is the third episode of a series about the AlphaFold2[^1][^2][^3][^4] paper. If you haven't already, I highly recommend to read the previous posts first:
 
     1. [Intro: The protein folding problem](./06_alphafold2_part1.md)
     2. [Part 1: The Evoformer network](./07_alphafold2_part2.md)
@@ -191,5 +191,4 @@ As mentioned earlier, AlphaFold is a sandwich of Evoformer blocks and Structure 
 [^1]: Jumper, J., Evans, R., Pritzel, A. et al. Highly accurate protein structure prediction with AlphaFold. Nature 596, 583–589 (2021). <https://doi.org/10.1038/s41586-021-03819-2>
 [^2]: Heidelberg AI Talk 5th of May 2022 | Highly Accurate Protein Structure Prediction with AlphaFold | Simon Kohl, DeepMind. <https://www.youtube.com/watch?v=tTN0MM2CQLU>
 [^3]: DeepMind website, AlphaFold technology: <https://deepmind.google/technologies/alphafold/>
-[^4]: Picture: from S. Bittrich & al., Structural relevance scoring identies the most informative entries of a contact map. <https://www.researchgate.net/publication/337787176_StructureDistiller_Structural_relevance_scoring_identifies_the_most_informative_entries_of_a_contact_map>
-[^5]: Supplementary Information for: Highly accurate protein structure prediction with AlphaFold: <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf>
+[^4]: Supplementary Information for: Highly accurate protein structure prediction with AlphaFold: <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf>
