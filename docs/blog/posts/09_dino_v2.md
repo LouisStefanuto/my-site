@@ -386,6 +386,15 @@ A recent paper by the same authors, titled "[Vision Transformers Need Registers 
 ![registers](./images/9/registers.png){width=600}
 </figure>
 
+---
+
+!!! Note "Conclusion"
+    To sum up, DINOv2 is an SSL training recipe for large image encoders, sitting at the crossroads of contrastive and clustering-based methods. Its rapid adoption in the industry highlights its promising potential to train general base models for downstream tasks.
+
+    It will be interesting to see how future SSL methods evolve — perhaps the next step will focus on simplifying the framework, like DeepMind did between AlphaFoldv2 and v3. If interested, I wrote a series about AFv2, check it out.
+
+    Thank you for reading this post! I hope you enjoyed it. If so, feel free to share it and connect 😊
+
 ## References
 
 [^1]: **DINO**: Caron, M., Touvron, H., Misra, I., Jégou, H., Mairal, J., Bojanowski, P., & Joulin, A. (2021). [Emerging properties in self-supervised vision transformers](https://arxiv.org/abs/2104.14294). In Proceedings of the IEEE/CVF international conference on computer vision (pp. 9650-9660)
