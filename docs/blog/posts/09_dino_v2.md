@@ -26,7 +26,7 @@ Hopefully, this challenge is similar to the one faced with embedding models a fe
 
 > Can we leverage these techniques to train a BERT-like embedding model for images?
 
-**DINOv2** is a Self-Supervised Learning method to train image encoders, without supervision. It builds on top of previous SSL works for Computer Vision like ViT, Masked Auto Encoders and iBOT and achieves impressive results on pretty much every downstream task. It is the continuation of DINO, a previous work from Meta (2021) that paved the way toward self-**DI**stillation with **NO** labels.
+**DINOv2**[^2] is a Self-Supervised Learning method to train image encoders, without supervision. It builds on top of previous SSL works for Computer Vision like ViT, Masked Auto Encoders and iBOT and achieves impressive results on pretty much every downstream task. It is the continuation of DINO[^1], a previous work from Meta (2021) that paved the way toward self-**DI**stillation with **NO** labels.
 
 Introduced by Meta in early 2023, DINOv2 has since settled itself as one of the **go-to technique to train large visual encoders**.
 
@@ -263,7 +263,7 @@ With fixed clusters, the cluster assignments can be treated as a $K$-class class
 
 > What makes SwAV's approach different?
 
-The challenge is that clusters are unknown before computing embeddings. Additionally, backpropagation can alter cluster order and structure, causing instability (as seen in DeepCluster-v2, which uses offline K-Means to create targets). An online algorithm is preferable.
+The challenge is that clusters are unknown before computing embeddings. Additionally, backpropagation can alter cluster order and structure, causing instability (as seen in DeepCluster-v2[^8], which uses offline K-Means to create targets). An online algorithm is preferable.
 
 <figure markdown>
 ![deep-cluster-v2](./images/9/deep-cluster-v2.png){width=500}
@@ -332,7 +332,7 @@ One of the biggest strengths of SSL is that **it enables training on unsupervise
 With DINOv2, the authors created a processing pipeline for a 142M-image dataset, curated from images crawled from the open web. For context, ImageNet-22k, a common supervised pre-training dataset, contains only 13,673,551 samples.
 
 - **Embedding**: A ViT-H/16 pre-trained on ImageNet-22k extracts visual features.
-- **Deduplication**: Near-duplicates are removed and the dataset is rebalanced using a Meta copy detection pipeline[^5].
+- **Deduplication**: Near-duplicates are removed and the dataset is rebalanced using a Meta copy detection pipeline[^6].
 - **Retrieval**: For each image in the curated dataset, the $N\sim4$ closest uncurated images are added to the final dataset.
 
 To compute similarities between queries and uncurated images, DINOv2's authors used [FAISS](https://github.com/facebookresearch/faiss) by Meta, a library for efficient similarity search and clustering of dense vectors.
@@ -380,7 +380,7 @@ These applications underscore the robustness of DINOv2 and its suitability for p
 
 ## Limitations and extensions
 
-A recent paper by the same authors, titled "[Vision Transformers Need Registers (2023)](https://arxiv.org/abs/2309.16588)", highlights that ViTs tend to store information in certain patches, causing discrepancies in the attention maps. Adding registers helps the network smooth these maps effectively.
+A recent paper by the same authors, titled "[Vision Transformers Need Registers (2023)](https://arxiv.org/abs/2309.16588)"[^3], highlights that ViTs tend to store information in certain patches, causing discrepancies in the attention maps. Adding registers helps the network smooth these maps effectively.
 
 <figure markdown>
 ![registers](./images/9/registers.png){width=600}

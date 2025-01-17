@@ -15,7 +15,7 @@ categories:
 <!-- more -->
 
 !!! note "Before you start"
-    This post is the second episode of a series about the AlphaFold2 paper. If you haven't already, I highly recommend to read the introduction first:
+    This post is the second episode of a series about the AlphaFold2 paper[^1][^2][^3][^5]. If you haven't already, I highly recommend to read the introduction first:
 
     1. [Intro: The protein folding problem](./06_alphafold2_part1.md)
     2. [Part 1: The Evoformer network](./07_alphafold2_part2.md) (you are here)
@@ -27,7 +27,7 @@ DeepMind engineers encapsulated the concept of **co-evolution** in their model.
 
 Co-evolution refers to the observation that residues (other name for amino acids) that bind together with non-covalent bonds, should mutate together, to keep the bonds intact. Therefore, if you know the sequences of proteins that are highly similar to your target sequence (let's say you have the hemoglobin protein for human, fish, dog, and cat), you can align the sequences and look for **co-evolving columns**. If columns evolve in pairs, the 2 residues may have a bond, and thus be spatially close.
 
-The core idea of DeepMind's team is thus to provide **not one but multiple sequences** that have a strong similarity with the sequence of interest. That multiple sequence batch is called a **Multi Sequence Alignment** (MSA).
+The core idea of DeepMind's team is thus to provide **not one but multiple sequences** that have a strong similarity with the sequence of interest. That multiple sequence batch is called a **Multi Sequence Alignment** (MSA).[^4]
 
 > 🔎 To construct the MSA, they first query a sequence database with sequence similarity and sequence alignment tools. In the end, the MSA is a $N_{sequences} \times N_{residues}$ matrix.
 

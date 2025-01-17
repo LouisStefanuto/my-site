@@ -45,7 +45,7 @@ In the following sections, I will walk you through **Denoising Diffusion Probabi
 
 !!! note "The 3+1 key concepts"
 
-    1. [Inverting the diffusion process](#inverting-the-diffusion-process)
+    1. [Inverting the diffusion process](#diffusion)
     2. The [simplified loss (level 1)](#loss-level-1)
     3. The [modified UNet architecture](#model-architecture)
 

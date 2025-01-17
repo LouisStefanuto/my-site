@@ -29,7 +29,7 @@ Proteins have hydrophilic residues (that like water) and hydrophobic residues (t
 <figcaption>Proteins fold into a complex 3D shape. This shape defines their properties.</figcaption>
 </figure>
 
-!!! quote "Why is it so important to know how a protein folds?"
+!!! quote "Why is it so important to know how a protein folds?[^4]"
 
 The 3D shape of a protein entirely defines how molecules and other proteins bind to it. In other words, **the 3D structure of a protein defines its properties**. To quote [The New York Times](https://www.nytimes.com/2022/07/28/science/ai-deepmind-proteins.html): "If scientists can pinpoint the shape of a particular protein, they can decipher how it operates."
 
@@ -64,7 +64,7 @@ Every two years, the CASP organizers release the sequences of proteins whose 3D 
 
 In 2020, at the 14th edition of CASP (CASP14) a team from Google DeepMind achieved incredible results, beating all their competitors by a **MASSIVE** margin.
 
-> 🌟 Their algorithm, **AlphaFold2**, is the core topic of this post.
+> 🌟 Their algorithm, **AlphaFold2**[^1][^2][^3][^4], is the core topic of this post.
 
 <figure markdown>
 ![evoformer](./images/6/casp.png)
@@ -90,5 +90,4 @@ In this series of posts, we will dive together into the architectural and traini
 [^1]: Jumper, J., Evans, R., Pritzel, A. et al. Highly accurate protein structure prediction with AlphaFold. Nature 596, 583–589 (2021). <https://doi.org/10.1038/s41586-021-03819-2>
 [^2]: Heidelberg AI Talk 5th of May 2022 | Highly Accurate Protein Structure Prediction with AlphaFold | Simon Kohl, DeepMind. <https://www.youtube.com/watch?v=tTN0MM2CQLU>
 [^3]: DeepMind website, AlphaFold technology: <https://deepmind.google/technologies/alphafold/>
-[^4]: Picture: from S. Bittrich & al., Structural relevance scoring identies the most informative entries of a contact map. <https://www.researchgate.net/publication/337787176_StructureDistiller_Structural_relevance_scoring_identifies_the_most_informative_entries_of_a_contact_map>
-[^5]: Supplementary Information for: Highly accurate protein structure prediction with AlphaFold: <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf>
+[^4]: Supplementary Information for: Highly accurate protein structure prediction with AlphaFold: <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf>
