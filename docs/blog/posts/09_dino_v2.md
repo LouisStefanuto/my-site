@@ -22,7 +22,7 @@ Every Data Scientist once used a ResNet50 backbone pre-trained on ImageNet to **
 
 The main weakness of these models is their training dataset. First, Supervised Learning requires high-quality annotated datasets. Sadly for us, these datasets are expensive to scale. Second, these datasets often lack diversity and are not representative of real-life. This leads to poor features for out-of-domain (OOD) images.
 
-Hopefully, this challenge is similar to the one faced with embedding models a few years ago in NLP. Researchers showed that we could leverage the knowledge of huge datasets, thus bypassing the need for annotation. They also discovered that the Transformers architecture performance scaled gracefully with the dataset and model sizes.
+Hopefully, this challenge is similar to the one faced with embedding models a few years ago in NLP. Researchers showed that we could leverage the knowledge of huge datasets with no labels, thus bypassing the need for annotation. They also discovered that the Transformers architecture performance scaled gracefully with the dataset and model sizes.
 
 > Can we leverage these techniques to train a BERT-like embedding model for images?
 
@@ -57,7 +57,7 @@ Building negative pairs is easy: sample two random images. If your dataset is la
     <figcaption>SimCLR.</figcaption>
     </figure>
 
-SimCLR works well under one condition: it requires **huge batch sizes** (>1024). The plot below, shows the degradation of the performance with the batch size. Intuitively, that means that SimCLR requires a lot of negative samples to space the embeddings in the latent space.
+SimCLR works well under one condition: it requires **large batch sizes** (>1024). The plot below, shows the degradation of the performance with the batch size. Intuitively, that means that SimCLR requires a lot of negative samples to space the embeddings in the latent space.
 
 This is problematic, because large batch sizes mean large memory usage. That is why DINO authors chose another technique called self-distillation, more on that later.
 
@@ -71,9 +71,9 @@ This is problematic, because large batch sizes mean large memory usage. That is 
 
 In the paper, we can read:
 
-> We learn our features with a discriminative self-supervised method that can be seen as a combination of **DINO** and **iBOT** losses with the **centering of SwAV** (Caron et al., 2020). We also add a **[Koleo] regularizer** to spread features and a short high-resolution training phase.
+> We learn our features with a **discriminative** self-supervised method that can be seen as a combination of **DINO** and **iBOT** losses with the **centering of SwAV** (Caron et al., 2020). We also add a **[Koleo] regularizer** to spread features and a short high-resolution training phase.
 
-To keep things simple, let's ignore SwAV for the moment. We will come back to it later. What the authors are telling us is that DINOv2 loss is a sum of three terms. Let's dive into each term ot understand the motivation behind it.
+To keep things simple, let's ignore SwAV for the moment. We will come back to it later. What the authors are telling us is that DINOv2 loss is a sum of three terms. Let's dive into each term to understand the motivation behind it.
 
 !!! bug ""
     $$
@@ -111,7 +111,7 @@ The student learns to mimic the output distribution of the teacher, a K-dimensio
 
 **Cross-entropy** is thus a suitable loss function for this task. The teacher predictions $p_t$ are the targets. The student predictions $p_s$ are the predictions. CE requires scores between 0 and 1, so the student and teacher outputs go through a softmax activation function.
 
-Note that the teacher outputs are centered by removing the EMA mean of the batch predictions and that the softmax contain a temperature parameter. More on these two in the [Training stabilization](#training-stabilization) section.
+Note that the teacher outputs are centered and that the softmax contain a temperature parameter. More on these two in the [Training stabilization](#training-stabilization) and [SwAV](#swav-centering) sections.
 
 $$
 \mathcal{L}_{DINO} = - \sum p_t \log p_s
@@ -187,7 +187,7 @@ with $i$ the indices of the masked tokens.
 
 The **Koleo regularizer** is an addition of DINOv2 on top of DINO, taken from the similarity search community.
 
-> **Motivation:** A good embedding model should use all its feature space, and pushes distinct images far away from each other. This property is especially well-suited for nearest-neighbor search tasks (e.g. retrieval).
+> **Motivation:** A good embedding model should use all its feature space and should push distinct images far away from each other. This property is especially well-suited for nearest-neighbor search tasks (e.g. retrieval).
 
 The Koleo regularizer is a simple contrastive term, that maximizes the distance between an image and its closest neighbor in the batch. Given a set of n vectors $(x_1, . . . , x_n)$, it is defined as:
 
@@ -199,11 +199,11 @@ where $d_{n, i} = \min_{j \neq i} \lVert x_i − x_j \rVert$ is the minimum dist
 
 <!-- > Wasn't the SwAV clustering approach enough to push embeddings away from each other? -->
 
-> **My guess**: In SwAV, the repulsion is implicit. Adding the Koleo regularizer is a cheap way to add an explicit repulsive force. I guess that gave an extra control on the latent space. Moreover, the Koleo regularizer only uses samples from the current batch, so it doesn't add much compute overhead.
+> **My guess**: In SwAV, the repulsion is implicit. Adding the Koleo regularizer is a cheap way to add an explicit repulsive force. I guess that gave an extra control on the latent space. Moreover, the Koleo regularizer only uses samples from the current batch, so it doesn't add much compute and memory overhead.
 
 ### Training stabilization
 
-Large SSL models are prone to collapse during training. To stabilize the training, DINOv2 used two opposite mechanisms:
+Large SSL models are prone to collapse during training. To stabilize the training, DINO used two opposite mechanisms:
 
 - **Teacher centering**: Subtract a running mean of past teacher predictions from the current teacher output. Centering balances the activations, preventing one dimension from dominating and reducing the risk of collapse to degenerate solutions. This has a **balancing role**.
 
@@ -248,7 +248,7 @@ def H(t, s):
 
 ### SwAV centering
 
-The last addition of DINOv2 is the Sinkhorn-Knopp centering, a training stabilization concept introduced by **SwAV**: Swapping Assignments between Views (another paper from Meta). SwAV is a self-supervised learning (SSL) method that employs **online clustering** to stabilize training and improve representation learning.
+The last addition of DINOv2 is the Sinkhorn-Knopp centering applied to the teacher, a training stabilization concept introduced by **SwAV**: Swapping Assignments between Views (another paper from Meta). SwAV is a self-supervised learning (SSL) method that employs **online clustering** to stabilize training and improve representation learning.
 
 > WTF are you talking about ... What has clustering to do with visual encoders?
 
@@ -263,36 +263,43 @@ With fixed clusters, the cluster assignments can be treated as a $K$-class class
 
 > What makes SwAV's approach different?
 
-The challenge is that clusters are unknown before computing embeddings. Additionally, backpropagation can alter cluster order and structure, causing instability (as seen in DeepCluster-v2[^8], which uses offline K-Means to create targets). An online algorithm is preferable.
+Previous clustering-based SSL approaches used an offline clustering algorithm[^8] to group samples into target clusters (e.g., K-Means). Yet, even if the objective in clustering is tractable, it does not scale well with the dataset as it requires a pass over the entire dataset to form cluster assignments that used as targets during training[^9]. Moreover, these methods often led to degenerate solutions, where a trivial outcome is assigning all points to the same cluster. Related works employed various tricks to mitigate this issue, but these solutions were not always stable.
 
 <figure markdown>
 ![deep-cluster-v2](./images/9/deep-cluster-v2.png){width=500}
 <figcaption>Before SwAV, clustering-based SSL approaches relied on offline clustering steps. Here is the example from DeepCluster-v2.</figcaption>
 </figure>
 
-SwAV solves this by learning centroids as model parameters to stabilize training.
-
-SwAV maps $B$ samples (a batch) to $K$ clusters, enforcing an equipartition constraint using a cost matrix. Ideally, assignments should be balanced across the $K$ clusters. This setup resembles an optimal transport problem with an entropy constraint:
+SwAV addresses these challenges by (1) learning centroids as model parameters and (2) enforcing an equipartition constraint, ensuring an even distribution of samples across the $K$ clusters. In practice, SwAV maps a batch of $B$ samples to $K$ clusters and applies the equipartition constraint using a cost matrix[^9]. This setup resembles an optimal transport problem, which is relaxed for faster computation. The resulting loss function is:
 
 $$
 \max_{Q \in \mathcal{Q}} \ \text{Tr}(Q^\top C^\top Z) + \varepsilon H(Q)
 $$
 
-The target clusters are given by:
+> Intuitively, aligning the predicted clusters $C^\top Z$ with the label clusters $Q$ maximizes the function. The entropy term $H(Q)$ acts as regularization to enforce equipartition.
+
+This relaxed problem has a fast, computable solution. The target clusters are determined as:
 
 $$
 Q^* = \text{Diag}(u) \exp\left(\frac{C^\top Z}{\varepsilon}\right) \text{Diag}(v)
 $$
 
-where $u$ and $v$ are renormalization vectors in $\mathbb{R}^K$ and $\mathbb{R}^B$ respectively. These vectors are computed  using the iterative **Sinkhorn-Knopp** algorithm, which gives the centering technique its name.
+where $u$ and $v$ are renormalization vectors in $\mathbb{R}^K$ and $\mathbb{R}^B$, respectively. These vectors are computed iteratively using the **Sinkhorn-Knopp** algorithm, which lends its name to the centering technique.
 
-!!! success "SwAV aims at simultaneously learning meaningful clusters and then train a model to assign the image features to the same cluster whatever the transformation applied to the image. The target cluster is computed online using the SK algorithm from the image embedding and the learned clusters."
+!!! quote "More about the equivalence to an optimal transport problem ..."
+    The DINOv2 method references SwAV, which in turn points to the paper "Self-labelling via simultaneous clustering and representation learning"[^10]. This paper provides a clear explanation of the motivation behind using the SK algorithm, making it a recommended read for a deeper understanding.
 
-> How is the problem reformulated in practice?
+!!! note "Let's summarize"
+    SwAV jointly learns target clusters and trains the model to assign features to clusters. The target clusters are computed online using the SK algorithm from the features and the learned clusters.
+
+> Enough theory. How is it implemented?
 
 SwAV uses a finite set of prototypes ($C$), learnable parameters that act as centroids summarizing the feature space. These prototypes project features ($Z$) into codes ($Q$), representing soft cluster assignments. The codes indicate the similarity between features and prototypes (as shown in the expression for $Q^*$).
 
 The **core idea** is to predict the code (cluster assignment) of one augmented view using the features from another view (that is the **swap** of **Sw**AV). This ensures that representations are invariant to augmentations while being semantically meaningful.
+
+!!! quote ""
+    ![swav](./images/9/swav.png)
 
 > SwAV Loss: How Does It Work?
 
@@ -306,8 +313,52 @@ where: $H$ is the cross-entropy loss, $z^{t}$ are the features, $q^{t}$ are clus
 
 In simple terms, the first term aligns the teacher’s embedding of view 1 ($z_1^{t}$) with the cluster assignment ($q_2^{s}$) of view 2. The second term swaps the roles of view 1 and view 2. This swapping mechanism maps both views to consistent clusters, enforcing augmentation invariance.
 
-!!! quote ""
-    ![swav](./images/9/swav.png)
+??? quote "SwAV Pseudo-code for the curious ones (from the paper[^9])"
+    ```python
+    # C: prototypes (DxK)
+    # model: convnet + projection head
+    # temp: temperature
+    for x in loader: # load a batch x with B samples
+        x_t = t(x) # t is a random augmentation
+        x_s = s(x) # s is a another random augmentation
+        z = model(cat(x_t, x_s)) # embeddings: 2BxD
+        scores = mm(z, C) # prototype scores: 2BxK
+        scores_t = scores[:B]
+        scores_s = scores[B:]
+
+        # compute assignments
+        with torch.no_grad():
+            q_t = sinkhorn(scores_t)
+            q_s = sinkhorn(scores_s)
+
+        # convert scores to probabilities
+        p_t = Softmax(scores_t / temp)
+        p_s = Softmax(scores_s / temp)
+
+        # swap prediction problem
+        loss = - 0.5 * mean(q_t * log(p_s) + q_s * log(p_t))
+
+        # SGD update: network and prototypes
+        loss.backward()
+        update(model.params)
+        update(C)
+
+        # normalize prototypes
+        with torch.no_grad():
+            C = normalize(C, dim=0, p=2)
+
+    # Sinkhorn-Knopp
+    def sinkhorn(scores, eps=0.05, niters=3):
+        Q = exp(scores / eps).T
+        Q /= sum(Q)
+        K, B = Q.shape
+        u, r, c = zeros(K), ones(K) / K, ones(B) / B
+        for _ in range(niters):
+            u = sum(Q, dim=1)
+            Q *= (r / u).unsqueeze(1)
+            Q *= (c / sum(Q, dim=0)).unsqueeze(0)
+            return (Q / sum(Q, dim=0, keepdim=True)).T
+    ```
 
 !!! note "To summarize SwAv ..."
 
@@ -405,3 +456,5 @@ A recent paper by the same authors, titled "[Vision Transformers Need Registers 
 [^6]: Pizzi, E., Roy, S. D., Ravindra, S. N., Goyal, P., & Douze, M. (2022). [A self-supervised descriptor for image copy detection](https://arxiv.org/abs/2202.10261). In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (pp. 14532-14542).
 [^7]: **SimCLR**: Chen, T., Kornblith, S., Norouzi, M., & Hinton, G. (2020, November). [A simple framework for contrastive learning of visual representations](https://arxiv.org/abs/2002.05709). In International conference on machine learning (pp. 1597-1607). PMLR.
 [^8]: **DeepCluster-v2**: Caron, M., Bojanowski, P., Joulin, A., & Douze, M. (2018). Deep clustering for unsupervised learning of visual features. In Proceedings of the European conference on computer vision (ECCV) (pp. 132-149).
+[^9]: **SwAV**: Caron, M., Misra, I., Mairal, J., Goyal, P., Bojanowski, P., & Joulin, A. (2020). [Unsupervised learning of visual features by contrasting cluster assignments](https://arxiv.org/abs/2006.09882). Advances in neural information processing systems, 33, 9912-9924.
+[^10]: Asano, Y. M., Rupprecht, C., & Vedaldi, A. (2019). [Self-labelling via simultaneous clustering and representation learning](https://arxiv.org/abs/1911.05371). arXiv preprint arXiv:1911.05371.
