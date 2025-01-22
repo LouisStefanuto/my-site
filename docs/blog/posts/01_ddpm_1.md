@@ -173,8 +173,8 @@ This is typical of segmentation problems, in which one wants to classify every s
 Yet, the vanilla UNet architecture is fully convolutional and can't manage an additional input to condition the denoising process (as a text prompt). That's why [Ho & al. (2020)](https://arxiv.org/abs/2006.11239) used a modified version of UNet called **PixelCNN+** from [Salimans & al.(2017)](https://arxiv.org/abs/1701.05517), to replace the fully-CNN backbone with a hybrid backbone made of both CNN blocks (ResNet) and Cross attention blocks.
 
 <figure markdown>
-  ![Model architecture](https://deepsense.ai/wp-content/uploads/2023/03/Overview-of-U-Net-architecture.jpeg)
-  <figcaption>Model architecture <a href="https://www.mvrlink.com/diffusion-model-in-practice/" title="modelarchitecture">Source</a></figcaption>
+  ![Model architecture](https://miro.medium.com/v2/resize:fit:1400/1*ww8rcDo_3w1uWS1gDdnAYw.png)
+  <figcaption>Model architecture <a href="https://miro.medium.com/v2/resize:fit:1400/1*ww8rcDo_3w1uWS1gDdnAYw.png" title="modelarchitecture">Source</a></figcaption>
 </figure>
 
 ### Cross attention
