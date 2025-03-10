@@ -52,6 +52,6 @@ extra_javascript:
 # Page tree
 nav:
   - Home: index.md
-  - CV: cv.md
+  - About: about.md
   - Posts:
     - blog/index.md
