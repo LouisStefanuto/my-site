@@ -1,4 +1,4 @@
-# Welcome to my website 👋
+# Portfolio 👋
 
 This repo defines all you see on my personal website here: <https://louisstefanuto.github.io/my-site/>.
 
