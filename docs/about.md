@@ -1,6 +1,6 @@
 # Contact
 
-Hello! I am **Louis Stefanuto**, I am passionate about Artificial Intelligence and dealing with (big) data. I work as a **AI Engineer** at [**Capgemini Invent**](https://www.capgemini.com/about-us/who-we-are/our-brands/capgemini-invent/).
+Hello! I am **Louis Stefanuto**, I am passionate about Artificial Intelligence and dealing with (big) data. I work as a **Data Scientist / ML Engineer** at [**Capgemini Invent**](https://www.capgemini.com/about-us/who-we-are/our-brands/capgemini-invent/).
 
 I completed my engineering studies at École [**Polytechnique**](https://programmes.polytechnique.edu/cycle-ingenieur-polytechnicien/cycle-ingenieur-polytechnicien) (Cycle Grandes Ecoles), specializing in Machine Learning and Mechanics. Additionally, I hold a dual degree "Ingénieur Civil" from **Mines Paris**, with a focus on AI Systems.
 
