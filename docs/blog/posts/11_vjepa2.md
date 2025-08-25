@@ -66,7 +66,7 @@ Doing so, we could first embed the known situation (the past), then sample possi
 
 !!! note "What is I-JEPA's solution?"
 
-To build a powerful world model capable of abstraction, I-JEPA is trained in the latent space. If you are familiar with self-distillation techniques like DINOv2 (I wrote a [**dedicated post on it, check it out** 🌟](./09_dino_v2.md)), the model basically **learns to predict the embeddings of the masked tokens of an image**.
+To build a powerful world model capable of abstraction, I-JEPA[^2] is trained in the latent space. If you are familiar with self-distillation techniques like DINOv2 (I wrote a [**dedicated post on it, check it out** 🌟](./09_dino_v2.md)), the model basically **learns to predict the embeddings of the masked tokens of an image**.
 
 !!! quote ""
     <figure markdown>
