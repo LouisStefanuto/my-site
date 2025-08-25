@@ -1,0 +1,1301 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Personal website of Louis Stefanuto">
+      
+      
+      
+      
+      
+        <link rel="next" href="../../13/overfit2-from-ddpms-to-stable-diffusion-xl/">
+      
+      
+      <link rel="icon" href="../../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>Overfit#1: Denoising Diffusion Probabilistic Models - Basics of Diffusion models - Louis Stefanuto</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.7e37652d.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#overfit1-denoising-diffusion-probabilistic-models-basics-of-diffusion-models" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../../.." title="Louis Stefanuto" class="md-header__button md-logo" aria-label="Louis Stefanuto" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Louis Stefanuto
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Overfit#1: Denoising Diffusion Probabilistic Models - Basics of Diffusion models
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/LouisStefanuto" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../about/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  About
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../../" class="md-tabs__link">
+          
+  
+  
+  Posts
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../.." title="Louis Stefanuto" class="md-nav__button md-logo" aria-label="Louis Stefanuto" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Louis Stefanuto
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/LouisStefanuto" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    About
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Posts
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Posts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      <a href="../../../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Index
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Post series
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Post series
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/alphafold/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AlphaFold
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/chemistry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chemistry
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/computer-vision/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Computer Vision
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/diffusion-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Diffusion models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/drug-discovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Drug Discovery
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/embedding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Embedding
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/llm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    LLM
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/reinforcement-learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Reinforcement Learning
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/robotics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Robotics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/ssl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SSL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/video/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Video
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#motivation-the-generation-trilemma" class="md-nav__link">
+    <span class="md-ellipsis">
+      Motivation - The generation trilemma
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#diffusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Diffusion
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Diffusion">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#forward-diffusion-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      Forward diffusion process
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backward-denoising-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      Backward denoising process
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#loss-level-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Loss (level 1)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inference" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inference
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#model-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model architecture
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Model architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#u-net-backbone" class="md-nav__link">
+    <span class="md-ellipsis">
+      U-Net backbone
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross-attention" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cross attention
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#specify-the-timestep" class="md-nav__link">
+    <span class="md-ellipsis">
+      Specify the timestep
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#loss-level-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Loss (level 2)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Loss (level 2)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#elbo" class="md-nav__link">
+    <span class="md-ellipsis">
+      ELBO
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simplify-the-kl" class="md-nav__link">
+    <span class="md-ellipsis">
+      Simplify the KL
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reparametrize" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reparametrize
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations-conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Limitations &amp; Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      References
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+  <div class="md-content md-content--post" data-md-component="content">
+    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner md-post">
+          <nav class="md-nav md-nav--primary">
+            <div class="md-post__back">
+              <div class="md-nav__title md-nav__container">
+                <a href="../../../../" class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+                  <span class="md-ellipsis">
+                    Back to index
+                  </span>
+                </a>
+              </div>
+            </div>
+            
+              <div class="md-post__authors md-typeset">
+                
+                  <div class="md-profile md-post__profile">
+                    <span class="md-author md-author--long">
+                      <img src="https://github.com/LouisStefanuto.png" alt="Louis Stefanuto">
+                    </span>
+                    <span class="md-profile__description">
+                      <strong>
+                        
+                          Louis Stefanuto
+                        
+                      </strong>
+                      <br>
+                      Creator
+                    </span>
+                  </div>
+                
+              </div>
+            
+            <ul class="md-post__meta md-nav__list">
+              <li class="md-nav__item md-nav__item--section">
+                <div class="md-post__title">
+                  <span class="md-ellipsis">
+                    Metadata
+                  </span>
+                </div>
+                <nav class="md-nav">
+                  <ul class="md-nav__list">
+                    <li class="md-nav__item">
+                      <div class="md-nav__link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"/></svg>
+                        <time datetime="2024-02-01 00:00:00+00:00" class="md-ellipsis">February 1, 2024</time>
+                      </div>
+                    </li>
+                    
+                    
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v15h3V3zm3 2 4 13 3-1-4-13zM5 5v13h3V5zM3 19v2h18v-2z"/></svg>
+                          <span class="md-ellipsis">
+                            in
+                            
+                              <a href="../../../../category/diffusion-models/">Diffusion models</a></span>
+                        </div>
+                      </li>
+                    
+                    
+                      
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7z"/></svg>
+                          <span class="md-ellipsis">
+                            
+                              14 min read
+                            
+                          </span>
+                        </div>
+                      </li>
+                    
+                  </ul>
+                </nav>
+              </li>
+            </ul>
+            
+          </nav>
+          
+        </div>
+      </div>
+    </div>
+    <article class="md-content__inner md-typeset">
+      
+        
+  
+
+
+
+  
+  
+
+
+<h1 id="overfit1-denoising-diffusion-probabilistic-models-basics-of-diffusion-models"><strong>Overfit#1:</strong> Denoising Diffusion Probabilistic Models - Basics of Diffusion models</h1>
+<p><img alt="Image illustrative" src="../../../../images/1/main.jpg" /></p>
+<!-- more -->
+
+<p><em>A deep dive into DDPMs.</em></p>
+<h2 id="motivation-the-generation-trilemma">Motivation - The generation trilemma</h2>
+<p><strong>Diffusion models</strong> are image generation deep learning models, able to generate highly-realistic images, usually from a text instruction. To put it briefly, they are to image generation what Large Language Models (LLMs) are to text generation.</p>
+<p>Diffusion models took the world by storm in 2022. Since the release of open-source models (Stable Diffusion) and playgrounds (DALL-E from OpenAI, Midjourney), they have established themselves as the go-to solution to generate images.</p>
+<figure>
+<p><img alt="Image title" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Astronaut_Riding_a_Horse_%28SDXL%29.jpg/800px-Astronaut_Riding_a_Horse_%28SDXL%29.jpg" width="400" />
+  </p>
+<figcaption>"A photograph of an astronaut riding a horse"<br>From <a href="https://en.wikipedia.org/wiki/Stable_Diffusion" title="Wikipedia Stable Diffusion"> Stable Diffusion Wikipedia page</a>.</figcaption>
+</figure>
+<p>When it comes to image generation, one expects three essential characteristics from a generative model:</p>
+<ul>
+<li><strong>High-quality outputs</strong>: the model should produce realistic images with a high level of detail.</li>
+<li><strong>Diversity</strong> (or Mode Coverage): the model should generate a variety of images, not solely a few hyper-realistic ones.</li>
+<li><strong>Fast sampling</strong> (inference): we desire the generation process to be rapid and, of course, resource-efficient.</li>
+</ul>
+<figure>
+<p><img alt="Image title" src="../../../../images/1/trilemma.png" width="400" />
+  </p>
+<figcaption>The generation trilemma</figcaption>
+</figure>
+<p>Back in 2020, most methods struggled to effectively address these three challenges simultaneously:</p>
+<ul>
+<li>VAEs: offered cost-effective inference and diverse samples but often resulted in low-quality output.</li>
+<li>GANs: provided efficient inference and <a href="https://thispersondoesnotexist.com">high-quality samples</a> but proved challenging to train due to the dual-model architecture (discriminator VS generator), making them susceptible to mode collapse during training (where the model consistently generates the same few images).</li>
+</ul>
+<p>In the following sections, I will walk you through <strong>Denoising Diffusion Probabilistic Models</strong> (DDPM) from <a href="https://arxiv.org/abs/2006.11239">Ho &amp; al. (2020)</a>, which is the technological advancement responsible for the image generation revolution. As we will see, DDPMs allow for <strong>diverse and high-quality sample generation</strong>, but at the cost of <strong>increased inference time</strong> (mitigated later as we will see in future posts!).</p>
+<div class="admonition note">
+<p class="admonition-title">The 3+1 key concepts</p>
+<ol>
+<li><a href="#diffusion">Inverting the diffusion process</a></li>
+<li>The <a href="#loss-level-1">simplified loss (level 1)</a></li>
+<li>The <a href="#model-architecture">modified UNet architecture</a></li>
+</ol>
+<p>I could add a 4th point for the proof of the loss. It is pretty math-intense, so I keep it as an extra milestone for curious readers in <a href="#loss-level-2">Loss (level 2)</a>.</p>
+</div>
+<p>Ready? Let's begin!</p>
+<hr />
+<h2 id="diffusion">Diffusion</h2>
+<p>Diffusion Models generate images by <strong>iterative refinement</strong>. They slowly add random gaussian noise to an image, then learn to remove the noise to recover the image. Doing so, we get a model capable of generating images from random noise in multiple steps.</p>
+<h3 id="forward-diffusion-process">Forward diffusion process</h3>
+<p>During the <strong>forward diffusion process</strong>, we add some gaussian noise to the image, iteratively. The image thus becomes more and more noisy. After hundreds or thousands of steps, the resulting image is pure noise, all information being lost through diffusion.</p>
+<figure>
+<p><img alt="Forward process" src="../../../../images/1/forward.png" />
+  </p>
+<figcaption>Image modified from source: <a href="https://arxiv.org/abs/2006.11239" title="Ho & al. (2020)"> Ho &amp; al. (2020)</a></figcaption>
+</figure>
+<p>Let us define <span class="arithmatex">\(\mathbf{x}_0\)</span> the original image, <span class="arithmatex">\(T\)</span> the number of diffusion steps and <span class="arithmatex">\(t\)</span> an intermediate time step. The noising process from image <span class="arithmatex">\(t-1\)</span> to <span class="arithmatex">\(t\)</span> is parametrized by a variance schedule <span class="arithmatex">\(\beta_t\)</span>. Note that <span class="arithmatex">\(\beta_t \ll 1\)</span> as we want each step to add really little noise <span class="arithmatex">\(\epsilon\)</span>.</p>
+<div class="arithmatex">\[
+q\left(\mathbf{x}_t|\mathbf{x}_{t-1}\right) = \mathcal{N}\left(\mathbf{x}_t ; \underbrace{\sqrt{1-\beta_t} \mathbf{x}_{t-1}}_{mean}, \underbrace{\beta_t}_{variance} \mathbf{I}\right) \iff \mathbf{x}_t = \sqrt{1-\beta_t} \mathbf{x}_{t-1} + \sqrt{\beta_t} \times \epsilon
+\]</div>
+<p>Nice! To sample <span class="arithmatex">\(\mathbf{x}_t\)</span>, all we have to do is: draw a <span class="arithmatex">\(\mathbf{x}_0\)</span> from our image dataset, sample noise, add it, get <span class="arithmatex">\(\mathbf{x}_1\)</span>. Repeat. Easy isn't it?</p>
+<div class="admonition quote">
+<p class="admonition-title">Ok, but this process is sequential, we need <span class="arithmatex">\(\mathbf{x}_1\)</span> to sample a <span class="arithmatex">\(\mathbf{x}_2\)</span>, then <span class="arithmatex">\(\mathbf{x}_3\)</span> ... Can we do better?</p>
+</div>
+<p>Yes we can! Thanks to the normal distribution properties, we can write <span class="arithmatex">\(\mathbf{x}_t\)</span> at any time step <span class="arithmatex">\(t\)</span> as a function of <span class="arithmatex">\(\mathbf{x}_0\)</span> and the variances <span class="arithmatex">\(\left\{\beta_s\right\}_{s=1}^t\)</span>. Thus, knowing <span class="arithmatex">\(\mathbf{x}_0\)</span>, we can sample <span class="arithmatex">\(\mathbf{x}_t\)</span> in only one noising process! This trick makes the noising process much faster as we remove the sequential bottleneck.</p>
+<div class="admonition bug">
+<div class="arithmatex">\[q\left(\mathbf{x}_t|\mathbf{x}_0\right)=\mathcal{N}\left(\mathbf{x}_t ; \sqrt{\bar{\alpha}_t} \mathbf{x}_0,\left(1-\bar{\alpha}_t\right) \mathbf{I}\right) \quad \text {where } \alpha_t=1-\beta_t \, \text{and } \, \bar{\alpha}_t=\prod_{s=1}^t \alpha_s\]</div>
+</div>
+<details class="quote">
+<summary>Proof</summary>
+<div class="arithmatex">\[\begin{array}{rlr}\mathbf{x}_t &amp;=\sqrt{\alpha_t} \mathbf{x}_{t-1}+\sqrt{1-\alpha_t} \mathbf{\epsilon}_{t-1} \quad \text {where } \mathbf{\epsilon}_{t-1}, \mathbf{\epsilon}_{t-2}, \cdots \sim \mathcal{N}(\mathbf{0}, \mathbf{I}) \\ &amp;=\sqrt{\alpha_{t-1}}\sqrt{\alpha_{t-2}} \mathbf{x}_{t-2} + \underbrace{\sqrt{\alpha_t}\sqrt{1-\alpha_{t-1}}}_{\sigma_1} \mathbf{\epsilon}_{t-2} + \underbrace{\sqrt{1-\alpha_t}}_{\sigma_2} \mathbf{\epsilon}_{t-1} \end{array}\]</div>
+<p>Recall that <span class="arithmatex">\(X_1 \sim \mathcal{N}(\mathbf{0}, \sigma_1^2\mathbf{I})\)</span> and <span class="arithmatex">\(X_2 \sim \mathcal{N}(\mathbf{0}, \sigma_2^2\mathbf{I})\)</span> and <span class="arithmatex">\(X_1\)</span> and <span class="arithmatex">\(X_2\)</span> independant <span class="arithmatex">\(\Rightarrow\)</span> <span class="arithmatex">\(X_1+X_2 \sim \mathcal{N}(\mathbf{0}, (\sigma_1^2+\sigma_2^2)\mathbf{I})\)</span></p>
+<p>So here, the merged standard deviation is: <span class="arithmatex">\(\sqrt{1-\alpha_t\alpha_{t-1}}\)</span></p>
+<div class="arithmatex">\[\begin{array}{rlr}\mathbf{x}_t &amp; =\sqrt{\alpha_t \alpha_{t-1}} \mathbf{x}_{t-2}+\sqrt{1-\alpha_t \alpha_{t-1}} \overline{\mathbf{\epsilon}}_{t-2} \text {where } \overline{\mathbf{\epsilon}}_{t-2} \text { merges two gaussians} \\ &amp; =\cdots &amp; \\ &amp; =\sqrt{\bar{\alpha}_t} \mathbf{x}_0+\sqrt{1-\bar{\alpha}_t} \mathbf{\epsilon} &amp;\end{array}\]</div>
+</details>
+<div class="admonition success">
+<p class="admonition-title">Nice! We now have a clever way to noise our images. Now, how can we reverse this process?</p>
+</div>
+<h3 id="backward-denoising-process">Backward denoising process</h3>
+<p>Reversing the forward process is basically guessing, from a noised image, what was the source image it was most probably created from. Put briefly, we want to find the most probable <span class="arithmatex">\(\mathbf{x}_{t-1}\)</span>, knowing <span class="arithmatex">\(\mathbf{x}_t\)</span>.</p>
+<p>In more mathematical terms, during the forward process, we set an explicit expression for the <strong>prior</strong> <span class="arithmatex">\(q(\mathbf{x}_t|\mathbf{x}_{t-1})\)</span> and we now want the <strong>posterior</strong> <span class="arithmatex">\(q(\mathbf{x}_{t-1}|\mathbf{x}_t)\)</span>.</p>
+<p>Unfortunately, as often, the posterior is intractable. Bayes' theorem requires the evidence, which is hard to compute. For more details, Gregory Gundersen gives a great explanation <a href="https://gregorygundersen.com/blog/2021/04/16/variational-inference/#:~:text=However%2C%20in%20many%20practical%20models,theorem%2C%20p(X)">here</a>.</p>
+<div class="admonition quote">
+<p class="admonition-title">We need the posterior, but we can't compute it. How do we work around this problem?</p>
+</div>
+<p>We can't compute the exact posterior, but we can learn a neural network <span class="arithmatex">\(p_\theta\)</span> to approximate <span class="arithmatex">\(q(\mathbf{x}_{t-1}|\mathbf{x}_{t})\)</span>. If you are familiar with VAEs, training a decoder is the exact same idea.</p>
+<p>Back in 1949, <a href="#references">Feller</a> proved that the posterior is also a normal distribution <span class="arithmatex">\(\mathcal{N}(\mu, \Sigma)\)</span>, <strong>if <span class="arithmatex">\(\beta_t\)</span> is small enough (our case!)</strong> We can thus assume that our posterior can be parametrized by its mean and variance. We train the model to learn an approximate mean <span class="arithmatex">\(\mu_\theta(\mathbf{x}_t)\)</span> and approximated variance <span class="arithmatex">\(\Sigma_\theta(\mathbf{x}_t)\)</span>.</p>
+<p>Once we know the mean and variance of the posterior, starting from <span class="arithmatex">\(\mathbf{x}_t\)</span>, we can sample a candidate <span class="arithmatex">\(\mathbf{x}_{t-1}\)</span>, and then repeat until we reach <span class="arithmatex">\(\mathbf{x}_0\)</span>.</p>
+<figure>
+<p><img alt="Backward process" src="../../../../images/1/backward.png" />
+  </p>
+<figcaption>Image modified from source: <a href="https://arxiv.org/abs/2006.11239" title="Ho & al. (2020)"> Ho &amp; al. (2020)</a></figcaption>
+</figure>
+<details class="quote">
+<summary>Quote from <a href="#references">"Deep Unsupervised Learning using Nonequilibrium Thermodynamics"</a></summary>
+<p>For both Gaussian and binomial diffusion, for continuous diffusion (limit of small step size <span class="arithmatex">\(\beta\)</span>) the reversal of the diffusion process has the identical functional form as the forward process (Feller, 1949). Since <span class="arithmatex">\(q(\mathbf{x}_{t}|\mathbf{x}_{t-1})\)</span> is a Gaussian (binomial) distribution, and if <span class="arithmatex">\(\beta_t\)</span> is small, then <span class="arithmatex">\(q(\mathbf{x}_{t-1}|\mathbf{x}_{t})\)</span> will also be a Gaussian (binomial) distribution. The longer the trajectory the smaller the diffusion rate <span class="arithmatex">\(\beta\)</span> can be made.</p>
+</details>
+<h2 id="loss-level-1">Loss (level 1)</h2>
+<p>What is the objective function to our problem? We want to estimate the parameters of the reverse probability distribution, given some observed data (our training dataset of <span class="arithmatex">\(\mathbf{x}_0\)</span> samples). That's a <strong>likelihood maximization</strong> problem! Negative log-likelihood (NLL) is thus the straightforward loss function we're going to minimize.</p>
+<div class="admonition warning">
+<p class="admonition-title">Here comes the hardest part of the paper</p>
+<p>I will simplify things a bit so you get the intuitions. Then in <a href="#loss-level-2">Loss level 2</a>, I will refine my explanation based on the proof of the paper. So no worries if you feel like some arguments are missing in this section.</p>
+</div>
+<p>In their paper, <a href="https://arxiv.org/abs/2006.11239">Ho &amp; al. (2020)</a> used 2 tricks to simplify the loss:</p>
+<ul>
+<li>They don't learn the posterior variance. Instead they arbitrarily <strong>fix</strong> it: <span class="arithmatex">\(\Sigma_\theta(\mathbf{x}_t, t) = \beta_t\)</span>.</li>
+<li>Because (1) <span class="arithmatex">\(\mathbf{x}_t\)</span> is known at inference time and because (2) <span class="arithmatex">\(\mu\)</span> and <span class="arithmatex">\(\epsilon\)</span> are linked by: <span class="arithmatex">\(\mu_t=\frac{1}{\sqrt{\alpha_t}}\left(\mathbf{x}_t-\frac{1-\alpha_t}{\sqrt{1-\bar{\alpha}_t}} \epsilon_t\right)\)</span>, they re-parametrize the task, moving from a problem of predicting <span class="arithmatex">\(\mu\)</span> to <strong>predicting <span class="arithmatex">\(\epsilon\)</span></strong>.</li>
+</ul>
+<p>Using these tricks, they showed that, maximizing the NLL is roughly equivalent to minimizing a Mean Squared Error (MSE) over the noise added during the forward process:</p>
+<div class="arithmatex">\[L_t^{\text {simple }}=\mathbb{E}_{t \sim[1, T], \mathbf{x}_0, \mathbf{\epsilon}_t}\left[\left\|\epsilon_t-\epsilon_\theta\left(\mathbf{x}_t, t\right)\right\|^2\right]\]</div>
+<p>So, we can train our network in a supervised learning manner, to predict the normalized noise <span class="arithmatex">\(\epsilon_t\)</span>.</p>
+<figure>
+<p><img alt="Training and inference procedures" src="../../../../images/1/pseudocodes.png" />
+  </p>
+<figcaption>Pseudo code with extra annotations. Image source: <a href="https://arxiv.org/abs/2006.11239" title="DDPM"> Ho &amp; al. (2020)</a></figcaption>
+</figure>
+<h2 id="inference">Inference</h2>
+<p>At inference time, things are pretty simple. Draw a random noisy sample <span class="arithmatex">\(\mathbf{x}_T\)</span> from a normal centered distribution. Then predict the mean of the posterior <span class="arithmatex">\(q(\mathbf{x}_{T-1}\vert\mathbf{x}_T)\)</span>. As the posterior's variance is <span class="arithmatex">\(\beta_T\)</span>, we know all the parameters of the posterior: we can sample <span class="arithmatex">\(\mathbf{x}_{T-1}\)</span>.</p>
+<p>We then repeat the process <span class="arithmatex">\(T\)</span> times, slowly changing the variance according to the variance schedule <span class="arithmatex">\(\left(\beta_s\right)_{s \in [0,T]}\)</span>. At the end of the process, we get our generated image <span class="arithmatex">\(\mathbf{x}_0\)</span>!</p>
+<p>Note that the denoising process is therefore <strong>stochastic</strong>! Starting from one seed, we can get multiple similar outputs!</p>
+<figure>
+<p><img alt="inference" src="https://energy-based-model.github.io/Compositional-Visual-Generation-with-Composable-Diffusion-Models/website_files/imgs/videos/example2_N.gif" width="350" />
+  </p>
+<figcaption>The inference is also stochastic as we draw denoised images step-by-step. Image from <a href="https://energy-based-model.github.io/Compositional-Visual-Generation-with-Composable-Diffusion-Models/" title="inference"> Source</a></figcaption>
+</figure>
+<div class="admonition quote">
+<p class="admonition-title">Why splitting the generation process into multiple steps? It sounds like over-engineering.</p>
+<p>I see two main reasons:</p>
+<ol>
+<li><strong>You make the task easier for the model</strong>. Generating an image from pure noise is hard. To draw a parallel, generating directly is like drawing directly a painting on a blank sheet. When Leonardo Da Vinci painted the Mona Lisa, I am pretty sure he started by sketching the outlines and then refined its painting until it converged to its famous masterpiece. DPPMs do the same and split the generation task into multiple easier refinement sub-tasks.</li>
+<li><strong>Each denoising step is stochastic</strong>. The generated image is the product of multiple random actions, so the model can generate multiple outputs from a fixed seed. I guess it is one of the reasons why DDPMs achieve better mode coverage.  That differs from VAEs and GANs, which of course draw a random seed, but their decoder/generative process is then deterministic.</li>
+</ol>
+</div>
+<h2 id="model-architecture">Model architecture</h2>
+<h3 id="u-net-backbone">U-Net backbone</h3>
+<p>DDPMs take an image as input and return a noise of the same shape as output.</p>
+<p>This is typical of segmentation problems, in which one wants to classify every single pixel of an image. UNet is thus the straightforward architecture for our problem.</p>
+<p>Yet, the vanilla UNet architecture is fully convolutional and can't manage an additional input to condition the denoising process (as a text prompt). That's why <a href="https://arxiv.org/abs/2006.11239">Ho &amp; al. (2020)</a> used a modified version of UNet called <strong>PixelCNN+</strong> from <a href="https://arxiv.org/abs/1701.05517">Salimans &amp; al.(2017)</a>, to replace the fully-CNN backbone with a hybrid backbone made of both CNN blocks (ResNet) and Cross attention blocks.</p>
+<figure>
+<p><img alt="Model architecture" src="https://miro.medium.com/v2/resize:fit:1400/1*ww8rcDo_3w1uWS1gDdnAYw.png" />
+  </p>
+<figcaption>Model architecture <a href="https://miro.medium.com/v2/resize:fit:1400/1*ww8rcDo_3w1uWS1gDdnAYw.png" title="modelarchitecture">Source</a></figcaption>
+</figure>
+<h3 id="cross-attention">Cross attention</h3>
+<p>Cross attention was first introduced in <a href="https://arxiv.org/abs/1706.03762">Attention is all you need (2017)</a> as a bridge between the encoder and the decoder transformers.</p>
+<p>The core idea of cross attention is to merge two sequences into one. Using the cross attention mechanism, the context of a sequence <span class="arithmatex">\(seq_1\)</span> gets infused into a sequence <span class="arithmatex">\(seq_2\)</span>: the output has the same length as <span class="arithmatex">\(seq_2\)</span>.</p>
+<p>In DDPM, <span class="arithmatex">\(seq_1\)</span> could be a text prompt (encoded by a LLM like CLIP). <span class="arithmatex">\(seq_2\)</span> is the image ... To be more accurate, <strong>the image is chopped into a sequence of subimages</strong> so the attention block can handle it. Thus <span class="arithmatex">\(seq_2\)</span> is a "patchified" version of the feature map. That is the core idea of Vision Transformers <a href="https://arxiv.org/abs/2010.11929">ViT(2020)</a>. As the output of the cross attention block has the same length as the image, the output fused sequence can be unpatchified to recover the "CNN-like" feature map.</p>
+<figure>
+<p><img alt="Cross attention" src="../../../../images/1/crossattention.png" />
+  </p>
+<figcaption>Cross attention. Image modified from <a href="https://vaclavkosar.com/ml/cross-attention-in-transformer-architecture" title="crossattention">Vaclav Kosar</a></figcaption>
+</figure>
+<h3 id="specify-the-timestep">Specify the timestep</h3>
+<p>As we use the same network to denoise at all timesteps, the model needs extra info about the timestep <span class="arithmatex">\(t\)</span> it is at. In fact, the amount of noise to remove varies a lot through the backward process: a lot at the beginning (<span class="arithmatex">\(T, T-1, T-2\)</span> ...) but much less at the end (..., <span class="arithmatex">\(2,1,0\)</span>) as it should only polish the final image.</p>
+<p>In DDPM, the timestep is specified to the network using the Transformer sinusoidal position embedding from <a href="https://arxiv.org/abs/1706.03762">Attention is all you need (2017)</a>.</p>
+<hr />
+<p><span class="arithmatex">\(\Rightarrow\)</span> <strong>To sum up</strong>, we have a UNet model, enhanced with Attention blocks, that predicts the noise added to an image, conditioned by an input sequence.</p>
+<hr />
+<h2 id="loss-level-2">Loss (level 2)</h2>
+<div class="admonition note">
+<p class="admonition-title">Congrats for making it to this section!</p>
+<p>Now let's justify the MSE loss I introduced in <a href="#loss-level-1">Loss (level 1)</a>. I will try to be as straight-to-the-point as possible and give you the key elements so you understand the loss simplification.</p>
+</div>
+<h3 id="elbo">ELBO</h3>
+<p>Like VAEs, the objective function is the likelihood, yet it is hard to maximize. A common workaround is to maximize a lower bound called the <strong>ELBO</strong> (Expectation Lower BOund) using Jensen's inequality. In optimization, we usually prefer minimizing things, so we will use the negative log of the likelihood instead (NLL), and minimize an upper bound <span class="arithmatex">\(L_\text{VLB}\)</span>.</p>
+<div class="arithmatex">\[
+\begin{aligned}
+- \log p_\theta(\mathbf{x}_0)
+&amp;\leq - \log p_\theta(\mathbf{x}_0) + D_\text{KL}(q(\mathbf{x}_{1:T}\vert\mathbf{x}_0) \| p_\theta(\mathbf{x}_{1:T}\vert\mathbf{x}_0)) \\
+&amp;\leq \cdots \\
+&amp;\leq \mathbb{E}_{q(\mathbf{x}_{0:T})} \Big[ \log \frac{q(\mathbf{x}_{1:T}\vert\mathbf{x}_0)}{p_\theta(\mathbf{x}_{0:T})} \Big] = L_\text{VLB}
+\end{aligned}
+\]</div>
+<p>It seems like the ELBO is much more complex than the NLL! But in practice, expanding the sum gives rise to a 3-part expression:</p>
+<div class="arithmatex">\[
+L_\text{VLB} = \mathbb{E}_q [\underbrace{D_\text{KL}(q(\mathbf{x}_T \vert \mathbf{x}_0) \parallel p_\theta(\mathbf{x}_T))}_{L_T} + \sum_{t=2}^T \underbrace{D_\text{KL}( \overbrace{q(\mathbf{x}_{t-1} \vert \mathbf{x}_t, \mathbf{x}_0)}^{\text{gaussian}} \parallel \overbrace{p_\theta(\mathbf{x}_{t-1} \vert\mathbf{x}_t)}^{\text{gaussian}} )}_{L_{t-1}} \underbrace{- \log p_\theta(\mathbf{x}_0 \vert \mathbf{x}_1)}_{L_0} ]
+\]</div>
+<p>2 reasons why you should love this expression:</p>
+<ul>
+<li><span class="arithmatex">\(L_T\)</span> can be ignored as it doesn't depend on <span class="arithmatex">\(\theta\)</span>, because <span class="arithmatex">\(\mathbf{x}_T\)</span> is gaussian noise.</li>
+<li><span class="arithmatex">\(L_0\)</span> or reconstruction term, is equivalent to a <span class="arithmatex">\(L_t\)</span> term after simplification.</li>
+<li><span class="arithmatex">\(L_t\)</span> are KL divergence terms, comparing gaussian univariate distributions <span class="arithmatex">\(\rightarrow\)</span> Let's see why it is convenient!</li>
+</ul>
+<h3 id="simplify-the-kl">Simplify the KL</h3>
+<p>Infact, after some extensive calculus, one can prove that the posterior conditioned over <span class="arithmatex">\(\mathbf{x}_0\)</span> - <span class="arithmatex">\(q(\mathbf{x}_{t-1} \vert \mathbf{x}_t, \mathbf{x}_0)\)</span> - is also a gaussian distribution:</p>
+<div class="arithmatex">\[
+q(\mathbf{x}_{t-1} \vert \mathbf{x}_t, \mathbf{x}_0) = \mathcal{N}(\mathbf{x}_{t-1}; \tilde{\mu}(\mathbf{x}_t, \mathbf{x}_0), \tilde{\beta}_t \mathbf{I})
+\]</div>
+<p>where <span class="arithmatex">\(\tilde{\mu}_t (\mathbf{x}_t, \mathbf{x}_0) = \frac{\sqrt{\alpha_t}(1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t} \mathbf{x}_t + \frac{\sqrt{\bar{\alpha}_{t-1}}\beta_t}{1 - \bar{\alpha}_t} \mathbf{x}_0\)</span> and <span class="arithmatex">\(\tilde{\beta}_t = 1/(\frac{\alpha_t}{\beta_t} + \frac{1}{1 - \bar{\alpha}_{t-1}})\)</span></p>
+<p>That's great news because the KL-divergence between 2 univariate gaussian distributions has a closed form <span class="arithmatex">\(\rightarrow\)</span> <a href="https://en.wikipedia.org/wiki/Kullback–Leibler_divergence#Multivariate_normal_distributions">Proof</a>.</p>
+<div class="arithmatex">\[
+D_{KL}(P_1 || Q_2) = \log \frac{\sigma_2}{\sigma_1} + \frac{\sigma_1^2 + (\mu_1 - \mu_2)^2}{2 \sigma_2^2} - \frac{1}{2}
+\]</div>
+<p>Recall that we fixed the posterior variance, so it doesn't depend on <span class="arithmatex">\(\theta\)</span>. Thus:</p>
+<div class="arithmatex">\[
+L_{t-1} = \frac{1}{2 \beta_t} \| \tilde{\mu}_t(\mathbf{x}_t, \mathbf{x}_0) - \mu_\theta(\mathbf{x}_t, t) \|^2
+\]</div>
+<h3 id="reparametrize">Reparametrize</h3>
+<div class="admonition quote">
+<p class="admonition-title">We have expression of the targets <span class="arithmatex">\(\tilde{\mu}_t(\mathbf{x}_t, \mathbf{x}_0)\)</span>. So we can train a model to learn the posterior means!</p>
+</div>
+<p>Yes ... but there is one last step! <a href="https://arxiv.org/abs/2006.11239">Ho &amp; al. (2020)</a> showed that reparametrizing the loss over <span class="arithmatex">\(\epsilon\)</span> gives rise to an equivalent loss, which resembles Langevin dynamics and denoising score matching = they achieved to match two fields of research together! They also showed that "Predicting <span class="arithmatex">\(\epsilon\)</span> performs approximately as well as predicting <span class="arithmatex">\(\tilde{\mu}_t\)</span> when trained on the variational bound with fixed variances, but much better when trained with our simplified objective".</p>
+<p>Replacing <span class="arithmatex">\(\tilde{\mu}_t\)</span> by its closed expression: <span class="arithmatex">\(\tilde{\mu}_t (\mathbf{x}_t, \mathbf{x}_0) = \frac{\sqrt{\alpha_t}(1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t} \mathbf{x}_t + \frac{\sqrt{\bar{\alpha}_{t-1}}\beta_t}{1 - \bar{\alpha}_t} \mathbf{x}_0\)</span></p>
+<p>and replacing <span class="arithmatex">\(\mathbf{x}_0\)</span> with the forward process trick: <span class="arithmatex">\(\sqrt{\bar{\alpha}_t} \mathbf{x}_0+\sqrt{1-\bar{\alpha}_t} \epsilon, t \iff \mathbf{x}_0 = \frac{1}{\sqrt{\bar{\alpha}_t}}(\mathbf{x}_t - \sqrt{1 - \bar{\alpha}_t}\epsilon_t)\)</span></p>
+<p>We get:</p>
+<div class="arithmatex">\[
+L_{t-1} = \frac{ (1 - \alpha_t)^2 }{2 \alpha_t (1 - \bar{\alpha}_t) \beta_t} \|\epsilon_t - \epsilon_\theta(\sqrt{\bar{\alpha}_t}\mathbf{x}_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon_t, t)\|^2
+\]</div>
+<p>Final move, <a href="https://arxiv.org/abs/2006.11239">Ho &amp; al. (2020)</a> ditch the normalizing factor, as it improves the sample quality and makes the implementation simpler.</p>
+<div class="admonition bug">
+<div class="arithmatex">\[
+L_{t-1} = \|\epsilon_t - \epsilon_\theta(\sqrt{\bar{\alpha}_t}\mathbf{x}_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon_t, t)\|^2
+\]</div>
+</div>
+<hr />
+<h2 id="limitations-conclusion">Limitations &amp; Conclusion</h2>
+<p>You now have a deep understanding of how and why DDPMs work, congrats!</p>
+<p>DDPMs are powerful tools that you can now add to your toolkit. Yet they are not the perfect solution either, at least in their vanilla version. Because of their iterative denoising process, DDPMs are slow ... really slow.</p>
+<p>Researchers are still trying to lower the inference cost and time of DDPMs, for instance by skipping some denoising steps. More on that in a future post?</p>
+<hr />
+<h2 id="references">References</h2>
+<p>[1] Jonathan Ho &amp; al. <a href="https://arxiv.org/abs/2006.11239">“Denoising diffusion probabilistic models.”</a> (2020)</p>
+<p>[2] Weng, Lilian. <a href="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/">"What are diffusion models?"</a> (Jul 2021)</p>
+<p>[3] Jascha Sohl &amp; al. <a href="https://arxiv.org/abs/1503.03585">"Deep Unsupervised Learning using Nonequilibrium Thermodynamics"</a> (2015)</p>
+<p>[4] Feller, W. On the theory of stochastic processes, with particular reference to applications, Proceedings of the First Berkeley Symposium on Mathematical Statistics and Probability. (1949)</p>
+<p>[5] Vaswani &amp; al. <a href="https://arxiv.org/abs/1706.03762">"Attention is all you need"</a> (2017)</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  
+
+
+
+      
+    </article>
+  </div>
+
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/LouisStefanuto" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/in/louis-stefanuto/" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.tabs", "navigation.expand"], "search": "../../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="../../../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

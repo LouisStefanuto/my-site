@@ -1,0 +1,1185 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Personal website of Louis Stefanuto">
+      
+      
+      
+      
+        <link rel="prev" href="../../../02/24/overfit3-how-does-video-generation-work---insights-into-stable-video-diffusion/">
+      
+      
+        <link rel="next" href="../../30/overfit5-ai-for-drug-discovery-an-introduction/">
+      
+      
+      <link rel="icon" href="../../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>Overfit#4: All the techniques to control your text2img models: ControlNets, T2I-Adapters, Dreambooth ... - Louis Stefanuto</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.7e37652d.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#overfit4-all-the-techniques-to-control-your-text2img-models-controlnets-t2i-adapters-dreambooth" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../../.." title="Louis Stefanuto" class="md-header__button md-logo" aria-label="Louis Stefanuto" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Louis Stefanuto
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Overfit#4: All the techniques to control your text2img models: ControlNets, T2I-Adapters, Dreambooth ...
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/LouisStefanuto" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../about/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  About
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../../" class="md-tabs__link">
+          
+  
+  
+  Posts
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../.." title="Louis Stefanuto" class="md-nav__button md-logo" aria-label="Louis Stefanuto" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Louis Stefanuto
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/LouisStefanuto" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    About
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Posts
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Posts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      <a href="../../../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Index
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Post series
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Post series
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/alphafold/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AlphaFold
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/chemistry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chemistry
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/computer-vision/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Computer Vision
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/diffusion-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Diffusion models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/drug-discovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Drug Discovery
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/embedding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Embedding
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/llm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    LLM
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/reinforcement-learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Reinforcement Learning
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/robotics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Robotics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/ssl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SSL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/video/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Video
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#motivation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Motivation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-finetuning-doesnt-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why finetuning doesn't work
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conditioning-techniques" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conditioning techniques
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Conditioning techniques">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#controlnets" class="md-nav__link">
+    <span class="md-ellipsis">
+      ControlNets
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t2i-adapters" class="md-nav__link">
+    <span class="md-ellipsis">
+      T2I-Adapters
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#learning-a-new-single-conceptword" class="md-nav__link">
+    <span class="md-ellipsis">
+      Learning a new single concept/word
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+  <div class="md-content md-content--post" data-md-component="content">
+    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner md-post">
+          <nav class="md-nav md-nav--primary">
+            <div class="md-post__back">
+              <div class="md-nav__title md-nav__container">
+                <a href="../../../../" class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+                  <span class="md-ellipsis">
+                    Back to index
+                  </span>
+                </a>
+              </div>
+            </div>
+            
+              <div class="md-post__authors md-typeset">
+                
+                  <div class="md-profile md-post__profile">
+                    <span class="md-author md-author--long">
+                      <img src="https://github.com/LouisStefanuto.png" alt="Louis Stefanuto">
+                    </span>
+                    <span class="md-profile__description">
+                      <strong>
+                        
+                          Louis Stefanuto
+                        
+                      </strong>
+                      <br>
+                      Creator
+                    </span>
+                  </div>
+                
+              </div>
+            
+            <ul class="md-post__meta md-nav__list">
+              <li class="md-nav__item md-nav__item--section">
+                <div class="md-post__title">
+                  <span class="md-ellipsis">
+                    Metadata
+                  </span>
+                </div>
+                <nav class="md-nav">
+                  <ul class="md-nav__list">
+                    <li class="md-nav__item">
+                      <div class="md-nav__link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"/></svg>
+                        <time datetime="2024-03-17 00:00:00+00:00" class="md-ellipsis">March 17, 2024</time>
+                      </div>
+                    </li>
+                    
+                    
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v15h3V3zm3 2 4 13 3-1-4-13zM5 5v13h3V5zM3 19v2h18v-2z"/></svg>
+                          <span class="md-ellipsis">
+                            in
+                            
+                              <a href="../../../../category/diffusion-models/">Diffusion models</a></span>
+                        </div>
+                      </li>
+                    
+                    
+                      
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7z"/></svg>
+                          <span class="md-ellipsis">
+                            
+                              11 min read
+                            
+                          </span>
+                        </div>
+                      </li>
+                    
+                  </ul>
+                </nav>
+              </li>
+            </ul>
+            
+          </nav>
+          
+        </div>
+      </div>
+    </div>
+    <article class="md-content__inner md-typeset">
+      
+        
+  
+
+
+
+  
+  
+
+
+<h1 id="overfit4-all-the-techniques-to-control-your-text2img-models-controlnets-t2i-adapters-dreambooth"><strong>Overfit#4:</strong> All the techniques to control your text2img models: ControlNets, T2I-Adapters, Dreambooth ...</h1>
+<p><img alt="" src="../../../../images/4/main.jpg" /></p>
+<!-- more -->
+
+<div class="admonition note">
+<p class="admonition-title">Table of content</p>
+<ol>
+<li><a href="#motivation">Motivations</a></li>
+<li><a href="#why-finetuning-doesnt-work">Why traditional finetuning doesn't work</a></li>
+<li><a href="#conditioning-techniques">Conditioning techniques</a>: ControlNets, T2I-Adapters</li>
+<li><a href="#learning-a-new-single-conceptword">Learn a new object or person</a>: Dreambooth</li>
+</ol>
+</div>
+<h2 id="motivation">Motivation</h2>
+<p>Text-to-image models have shown impressive generation capabilities and give satisfying results when you have a vague idea of the image you want to create. But, <strong>if you have a really precise idea</strong> of what you want (a sketch for instance), it is often <strong>hard or even impossible to constrain the model</strong> through the text prompt condition. Whatever how verbose your instruction is, it feels like you can't fully control the model ...</p>
+<p>That behavior is inherently correlated to the way such text2img models are trained. To convert your text instruction into guidance, most models use multimodal embedding models (like CLIP from OpenAI). Yet, even if they excel at extracting semantics, they have a <strong>poor understanding of composition</strong>, i.e. the way objects are placed in the image. That is why the model tends to ignore your composition instructions.</p>
+<div class="admonition quote">
+<p class="admonition-title">What would our dream controllable txt2img model look like?</p>
+</div>
+<p>We would like a model that:</p>
+<ul>
+<li><strong>builds on top of our favorite pre-trained models</strong> (Stable Diffusion, DALLE ...), so we don't retrain a model from scratch, and can instead leverage their general knowledge learned from massive pre-training datasets</li>
+<li>can take as input <strong>one or multiple conditioning modalities</strong> like semantic segmentation maps, sketches, depth maps, human poses, canny edge images ...</li>
+<li>and MOST IMPORTANTLY can be <strong>trained on SMALL datasets</strong> without overfitting or catastrophic forgetting issues, as we may not have massive datasets at our disposal.</li>
+</ul>
+<blockquote>
+<p>Hopefully, some clever people already answered this question for you. Let's dive in! 🐠</p>
+</blockquote>
+<figure>
+<p><img alt="Conditions" src="../../../../images/4/conditioning_examples.png" />
+  </p>
+<figcaption>We would like to condition the model on any input that could guide the image generation.</figcaption>
+</figure>
+<h2 id="why-finetuning-doesnt-work">Why finetuning doesn't work</h2>
+<p>If you are familiar with Deep Learning, you might think:</p>
+<blockquote>
+<p>"That's obviously a simple finetuning task. Add a few layers to your network to take the conditioning image as input, add the condition embedding with the text prompt embedding, and train the model on your small dataset. Easy."</p>
+</blockquote>
+<p>And I do agree, that is almost a finetuning situation. But there is one big issue here: you will need <strong>a lot of data</strong> and <strong>a lot of computing power</strong>. For instance, Stability AI (the team that released Stable Diffusion) finetuned a SD-v2 model on depth maps. Their training required 12M images and thousands of GPU A100 training hours on an Nvidia GPU cluster. 💸💸💸</p>
+<p>And their method worked because they had a big finetuning dataset. What if you replicated their work with a dataset that is <span class="arithmatex">\(\times 100\)</span> smaller? Your model will <strong>instantly overfit</strong> to the finetuning dataset, as shown in literature.</p>
+<blockquote>
+<p>Finetuning is a dead-end, except for a happy few. We need something smoother and cheaper than finetuning.</p>
+</blockquote>
+<figure>
+<p><img alt="deer finetuning" src="../../../../images/4/deer.jpg" /></p>
+<figcaption>In a finetuning approach, one would train all the weights, both the pre-trained ones and the added ones.</figcaption>
+</figure>
+<h2 id="conditioning-techniques">Conditioning techniques</h2>
+<p>This issue pushed research to find out parameter-efficient methods to learn a new conditioning input, without losing the power of the txt2img pre-trained model.</p>
+<p>In February 2023, within a one-week time frame, two distinct teams from Standford (USA) and Tencent (China) published papers with similar ideas, <strong>ControlNets</strong><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> and <strong>Text2Image-Adapters</strong><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> (T2I).</p>
+<h3 id="controlnets">ControlNets</h3>
+<p><strong>ControlNet is a recipe</strong> to finetune txt2img models into learning a new condition. It is <strong>not a model</strong> in itself, as the architecture varies depending on the pre-trained model you want to finetune.</p>
+<p>The key idea behind ControlNets is to duplicate the model into (1) a <strong>frozen</strong> original model and (2) a <strong>trainable</strong> copy. The trainable copy will learn to take the condition <span class="arithmatex">\(c\)</span> as an additional input. As its feature maps have the same shape as the original network, we will add them to the original feature maps to <strong>control the generation process</strong>. Note that the condition <span class="arithmatex">\(c\)</span> is the output of a feature extractor - usually a CNN (not represented in the figure below), that must be trained too.</p>
+<figure>
+<p><img alt="controlnet" src="../../../../images/4/controlnet_simple.png" width="400" /></p>
+<figcaption>From the ControlNet paper [1]</figcaption>
+</figure>
+<!-- As its name suggests, the trainable copy is a twin of the original network, with additional **zero convolutions**. In order to take the new condition $c$ as input, a feature extractor (not represented on the figure) is added before the network. -->
+
+<div class="admonition quote">
+<p class="admonition-title">I see Zero convolutions in the figure. What are they? What's their purpose?</p>
+</div>
+<p>Zero convolutions are convolutional layers, with <span class="arithmatex">\(1\times1\)</span> kernels. According to the authors, their role is to stabilize the training by reducing the gradient noise. In fact, the <span class="arithmatex">\(1\times1\)</span> kernel weights and biases are initialized to zero, such that, at the beginning of the finetuning, the trainable copy has no impact, so the system ignores the copy model.</p>
+<p>Then, as the training goes on, the zero-conv layers slowly learn to guide the frozen network, with the condition <span class="arithmatex">\(c\)</span>.</p>
+<p>The previous figure was pretty conceptual, here is what it looks like in practice on a Stable Diffusion architecture:</p>
+<figure>
+<p><img alt="controlnet" src="../../../../images/4/controlnet.png" width="350" /></p>
+<figcaption>The ControlNet architecture for a Stable Diffusion model. From the ControlNet paper [1]</figcaption>
+</figure>
+<p>As you can see, the authors duplicated only half of the U-Net model (the encoder part of the U-Net, ~25% of the parameters) and added the conditioned feature maps in the second half (the decoder part of the U-Net). They claimed it gave better performance and reduced the computational cost.</p>
+<p>ControlNets also have some cool side properties like <strong>additivity</strong>, meaning that you can use multiple ControlNets (depth maps, segmentation maps ...) in parallel and sum their outputs to control the image generation. But keep in mind that each conditioning copy adds a 25% computational cost at inference time ...</p>
+<figure>
+<p><img alt="controlnet" src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*gkK1-LGRvCKjWCqoGCl-jg.png" width="600" /></p>
+<figcaption>The ControlNet architecture for a Stable Diffusion model, detailed version. Source <a href="https://medium.com/@steinsfu">Steins</a>.</figcaption>
+</figure>
+<div class="admonition quote">
+<p class="admonition-title">It sounds cool, but we end up training a model still 25% as big as the original one. And the inference now costs 125% of the original resources. That is not such an improvement.</p>
+</div>
+<p>I totally agree, I was also quite skeptical at first. It feels like we don't really solve our initial problem and that we could use finetuning instead.</p>
+<p>Surprisingly, the ControlNets approach is <strong>far more computationally efficient</strong> compared to direct finetuning. Do you remember the Stability AI SD-V2 depth-2-image model example I mentioned earlier? With similar performance, ControlNet's authors trained SD-v2 on the same depth conditioning but only used 200k training samples, one single NVIDIA RTX 3090Ti, and 5 days of training.</p>
+<p>Their guess is that freezing the model prevents overfitting and catastrophic forgetting. It also preserves the general capabilities of the pre-trained model, letting the trainable copy focus on one job : guiding the inference. Moreover, the zero convolutions enable smooth training, as the twin network does nothing at the beginning, and then progressively guides the pre-trained network.</p>
+<blockquote>
+<p>👉 To sum up ControlNets: below are some cool examples of their conditioning capabilities.</p>
+</blockquote>
+<figure>
+<p><img alt="controlnet" src="https://miro.medium.com/v2/resize:fit:1400/format:webp/1*YF-pjO4eI-Wo-OX1ZsiuoQ.png" width="600" /></p>
+<figcaption>ControlNets can give life to your childhood drawings.</figcaption>
+</figure>
+<figure>
+<p><img alt="controlnet" src="https://miro.medium.com/v2/resize:fit:2000/format:webp/1*x-5xP1IbZ1IXVncOuKG28w.png" width="600" /></p>
+<figcaption>Using ControlNets you can also enforce the pose of your generated character. Useful for marketing business cases.</figcaption>
+</figure>
+<h3 id="t2i-adapters">T2I-Adapters</h3>
+<p>ControlNets are great, but still expensive as they require around 25% of RAM compared to full-weight training. Can we do it cheaper? Yes, using <strong>Text-2-Image (T2I) Adapters</strong>.</p>
+<p>T2I-Adapters work like the ControlNet recipe. First, freeze a pre-trained model (ex. Stable Diffusion). Then add some conditioning trainable feature extractors.  Their intermediate feature maps should have the same shape as the frozen model's, so we can add them together (so far it is the same as ControlNets).</p>
+<p>But the key difference is that <strong>the trainable part is no longer a copy</strong> of the pre-trained model, <strong>but a simpler CNN</strong> with Residual blocks.</p>
+<p>This simpler architecture requires much less resources as the trainable model is much smaller.</p>
+<figure>
+<p><img alt="t2i" src="../../../../images/4/t2i.png" width="600" /></p>
+<figcaption>The architecture of the T2I-Adapters. From [2].</figcaption>
+</figure>
+<div class="admonition quote">
+<p class="admonition-title">What are the pros and the cons?</p>
+</div>
+<ul>
+<li>T2I-Adapters use around 50% less weights, so they are cheaper to train (~77M parameters for an 800M Stable Diffusion model).</li>
+<li>The image quality is similar to ControlNets, maybe slightly worse (blurry edges sometimes).</li>
+<li>Like ControlNets, one can use multiple Adapters simultaneously by summing their inputs.</li>
+<li>The only weird fact about them is that the authors used 4 32GB GPUs during 3 days to train their Adapters, which is more GPU hours than in the ControlNet paper. Which is quite surprising from my point of view.</li>
+</ul>
+<blockquote>
+<p>Fun fact: The main author of the T2I-Adapter's paper is an intern at Tencent 🤯</p>
+</blockquote>
+<hr />
+<div class="admonition success">
+<p class="admonition-title">ControlNets and T2I Adapters are the same</p>
+<p>To wrap up, these two solutions are basically twin approaches.</p>
+<p>ControlNets are bulky because they copy the pre-trained model to leverage its pre-training knowledge in the conditioning net. T2I-Adapters are lighter but learn from scratch.</p>
+<p>I guess the key takeaway is to <strong>freeze the pre-trained network</strong> - to preserve its power - and to train hyper-networks to "control" the big network, rather that re-training the whole model from scratch.</p>
+</div>
+<h2 id="learning-a-new-single-conceptword">Learning a new single concept/word</h2>
+<p>What if you are <strong>NOT</strong> interested on adding a condition, but rather on <strong>adding a new concept to the network</strong>?</p>
+<blockquote>
+<p>For the sake of explanation, let's say you want to generate multiple pictures of your favorite [BAG] in random places/contexts. Stable Diffusion has never seen [BAG] before (except if it is a famous bag, which is highly improbable), so it needs to learn the concept [BAG], from a few images only.</p>
+</blockquote>
+<p>A simple approach is to finetune the model on a few images, such that it learns an <strong>identifier</strong> token for your concept. Sadly, many experiments showed it often leads to overfitting and to language drift (catastrophic forgetting).</p>
+<blockquote>
+<p>👉 Usually researchers choose a rare token like [V] to represent the concept. For more coherence with literature, I will now use [V] instead of [BAG].</p>
+</blockquote>
+<figure>
+<p><img alt="dreambooth-bag" src="https://miro.medium.com/v2/resize:fit:1400/format:webp/0*ydxr7TAbE8nXQP2z" width="600" /></p>
+<figcaption>Given some input images of the bag, we would like to generate new images of it, in new contexts [3].</figcaption>
+</figure>
+<p>Hopefully, researchers found out some smart workarounds, like 🌟 <strong>DreamBooth</strong><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup><sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup> 🌟.</p>
+<p>The key idea of Dreambooth is to finetune the diffusion U-Net and the text2embedding model to <strong>learn a new token for your concept by coupling it to a class</strong> that is a coarse synonym of your concept. For instance, instead of learning on text labels like "[V] in the Grand Canyon", "[V] in the city of Versailles" ... you would instead train the network on descriptions like "a [V] <strong>backpack</strong> in the Grand Canyon", "a [V] <strong>backpack</strong> in the city of Versailles". This helps the model create an identifier token, using some <strong>prior</strong>.</p>
+<blockquote>
+<p>Yet, the authors of Dreambooth noticed two issues. First, the model tends to forget the prior class you coupled with your [V] token, here it would be "backpack". Second the model tends to generate images of the prior class that are less diverse.</p>
+</blockquote>
+<p>To counterbalance concept overwriting, they add a <strong>regularization term</strong> to the finetuning loss, to ensure that the network keeps its generated images of the prior concept ("backpack") as diverse as possible. To do so, they simply generate some random images of backpacks with the pre-trained network and feed them as training samples during finetuning.</p>
+<div class="arithmatex">\[\mathcal{L_t} = \mathbb{E}_{\mathbf{x}, \mathbf{c}, \epsilon, \epsilon^{\prime}, t}\left[\underbrace{w_t\left\|\hat{\mathbf{x}}_\theta\left(\alpha_t \mathbf{x}+\sigma_t \epsilon, \mathbf{c}\right)-\mathbf{x}\right\|_2^2}_{\text{loss new concept}} + \underbrace{\lambda w_{t^{\prime}}\left\|\hat{\mathbf{x}}_\theta\left(\alpha_{t^{\prime}} \mathbf{x}_{\mathrm{pr}}+\sigma_{t^{\prime}} \epsilon^{\prime}, \mathbf{c}_{\mathrm{pr}}\right)-\mathbf{x}_{\mathrm{pr}}\right\|_2^2}_{\text{loss prior concept}} \right]\]</div>
+<figure>
+<p><img alt="dreambooth" src="https://dreambooth.github.io/DreamBooth_files/system.png" /></p>
+</figure>
+<blockquote>
+<p>🔥 Now that the model knows the new concept, let's have fun.</p>
+</blockquote>
+<p>As you can see in the pictures below, Dreambooth achieves some impressive results when coupling your concept with others. For instance, it enables image editing (changing the color of a car) or concept mixing (creating animal hybrids). It's simply mind-blowing: the model learned a concept from a few images (~3-5).</p>
+<p>Dreambooth is not perfect either, the paper mentions some pitfalls. For instance, it tends to learn the background as a part of the concept, so it poorly generates backgrounds different from the ones in your images.</p>
+<blockquote>
+<p>👉 Dreambooth is definitively an approach to consider if you want to generate marketing images of a product.</p>
+</blockquote>
+<figure>
+<p><img alt="dreambooth-example" src="https://miro.medium.com/v2/resize:fit:1400/format:webp/1*KoYPrDr2vnH0_zkiQ-QncA.png" width="600" /></p>
+<figcaption>Some funny things you can do with Dreambooth. From [3].</figcaption>
+</figure>
+<figure>
+<p><img alt="dreambooth-example" src="../../../../images/4/issues-dreambooth.png" width="500" /></p>
+<figcaption>In some cases, Dreambooth performs poorly. From [3].</figcaption>
+</figure>
+<div class="admonition quote">
+<p class="admonition-title">Other techniques exist to learn a single new concept</p>
+<p>Dreambooth is not the only approach to learn a single new concept. For instance, an intern at NVIDIA proposed <strong>Text Inversion</strong> <sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>, a fairly similar technique that freezes the diffusion model and only finetunes the text2embedding model, to learn a representation of the new concept. Text inversion is cheaper, but performs slightly worse.</p>
+</div>
+<div class="admonition success">
+<p class="admonition-title">Takeaways on Dreambooth</p>
+<ul>
+<li>Couple your concept with one that the pre-trained model already knows, to leverage prior knowledge</li>
+<li>Enforce image diversity with a regularization term</li>
+</ul>
+</div>
+<hr />
+<h2 id="conclusion">Conclusion</h2>
+<p>For a year now, companies have been all about LLMs. Diffusion Models were left behind because they are harder to control, compared to their text siblings (easy to control with some prompt engineering). Maybe Control Nets, T2I-Adapters, and Dreambooth pave the way toward real-world use cases, especially in creative departments (bye-bye Photoshop?).</p>
+<p>Yet, giving more control to such models is also an open door to deep fakes. Based on the increasing number of NSFW finetuned models, I tend to think that the image generation community seems much less concerned about aligning such models.</p>
+<p>Some companies like DeepMind published techniques to watermark their pictures to help discriminate the truth from fake. But will it be enough?</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>ControlNet paper: Lvmin Zhang, Anyi Rao, Maneesh Agrawala, <a href="https://arxiv.org/abs/2302.05543">"Adding Conditional Control to Text-to-Image Diffusion Models"</a> (2023)&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Chong Mou, Xintao Wang, Liangbin Xie, Yanze Wu, Jian Zhang, Zhongang Qi, Ying Shan, Xiaohu Qie, <a href="https://arxiv.org/abs/2302.08453">"T2I-Adapter: Learning Adapters to Dig out More Controllable Ability for Text-to-Image Diffusion Models"</a> (2023)&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>N. Ruiz &amp;al., <a href="https://arxiv.org/abs/2208.12242">"DreamBooth: Fine Tuning Text-to-Image Diffusion Models for Subject-Driven Generation"</a> (2023)&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p>Rinon Gal &amp; al., <a href="https://arxiv.org/abs/2208.01618">"An Image is Worth One Word: Personalizing Text-to-Image Generation using Textual Inversion"</a> (2022)&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p>A cool medium post about Dreambooth <a href="https://trungtranthanh.medium.com/dreambooth-how-google-hacks-diffusion-model-to-generate-personalized-photos-b4721763f0f8">link</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  
+
+
+
+      
+    </article>
+  </div>
+
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/LouisStefanuto" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/in/louis-stefanuto/" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.tabs", "navigation.expand"], "search": "../../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="../../../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

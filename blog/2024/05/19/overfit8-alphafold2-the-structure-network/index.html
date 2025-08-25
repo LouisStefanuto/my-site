@@ -1,0 +1,1193 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Personal website of Louis Stefanuto">
+      
+      
+      
+      
+        <link rel="prev" href="../../18/overfit7-alphafold2-the-evoformer-network/">
+      
+      
+        <link rel="next" href="../../../../2025/01/13/overfit9-dinov2-explained-learning-robust-visual-features-without-supervision/">
+      
+      
+      <link rel="icon" href="../../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>Overfit#8: AlphaFold2: The structure network - Louis Stefanuto</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.7e37652d.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#overfit8-alphafold2-the-structure-network" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../../.." title="Louis Stefanuto" class="md-header__button md-logo" aria-label="Louis Stefanuto" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Louis Stefanuto
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Overfit#8: AlphaFold2: The structure network
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/LouisStefanuto" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../about/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  About
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../../" class="md-tabs__link">
+          
+  
+  
+  Posts
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../.." title="Louis Stefanuto" class="md-nav__button md-logo" aria-label="Louis Stefanuto" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Louis Stefanuto
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/LouisStefanuto" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    About
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Posts
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Posts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      <a href="../../../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Index
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Post series
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Post series
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/alphafold/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AlphaFold
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/chemistry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chemistry
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/computer-vision/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Computer Vision
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/diffusion-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Diffusion models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/drug-discovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Drug Discovery
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/embedding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Embedding
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/llm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    LLM
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/reinforcement-learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Reinforcement Learning
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/robotics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Robotics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/ssl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SSL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/video/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Video
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#problem-formulation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Problem formulation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#its-all-about-translations-and-rotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      It's all about translations and rotations
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#structure-network" class="md-nav__link">
+    <span class="md-ellipsis">
+      Structure network
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Structure network">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ipa-module" class="md-nav__link">
+    <span class="md-ellipsis">
+      IPA module
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backbone-prediction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Backbone prediction
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#atom-wise-prediction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Atom-wise prediction
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#losses" class="md-nav__link">
+    <span class="md-ellipsis">
+      Losses
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extra-ideas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Extra ideas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Extra ideas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#noisy-student-distillation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Noisy Student Distillation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interpretability" class="md-nav__link">
+    <span class="md-ellipsis">
+      Interpretability
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recycling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recycling
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+  <div class="md-content md-content--post" data-md-component="content">
+    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner md-post">
+          <nav class="md-nav md-nav--primary">
+            <div class="md-post__back">
+              <div class="md-nav__title md-nav__container">
+                <a href="../../../../" class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+                  <span class="md-ellipsis">
+                    Back to index
+                  </span>
+                </a>
+              </div>
+            </div>
+            
+              <div class="md-post__authors md-typeset">
+                
+                  <div class="md-profile md-post__profile">
+                    <span class="md-author md-author--long">
+                      <img src="https://github.com/LouisStefanuto.png" alt="Louis Stefanuto">
+                    </span>
+                    <span class="md-profile__description">
+                      <strong>
+                        
+                          Louis Stefanuto
+                        
+                      </strong>
+                      <br>
+                      Creator
+                    </span>
+                  </div>
+                
+              </div>
+            
+            <ul class="md-post__meta md-nav__list">
+              <li class="md-nav__item md-nav__item--section">
+                <div class="md-post__title">
+                  <span class="md-ellipsis">
+                    Metadata
+                  </span>
+                </div>
+                <nav class="md-nav">
+                  <ul class="md-nav__list">
+                    <li class="md-nav__item">
+                      <div class="md-nav__link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"/></svg>
+                        <time datetime="2024-05-19 00:00:00+00:00" class="md-ellipsis">May 19, 2024</time>
+                      </div>
+                    </li>
+                    
+                    
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v15h3V3zm3 2 4 13 3-1-4-13zM5 5v13h3V5zM3 19v2h18v-2z"/></svg>
+                          <span class="md-ellipsis">
+                            in
+                            
+                              <a href="../../../../category/alphafold/">AlphaFold</a>, 
+                              <a href="../../../../category/drug-discovery/">Drug Discovery</a>, 
+                              <a href="../../../../category/chemistry/">Chemistry</a></span>
+                        </div>
+                      </li>
+                    
+                    
+                      
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7z"/></svg>
+                          <span class="md-ellipsis">
+                            
+                              8 min read
+                            
+                          </span>
+                        </div>
+                      </li>
+                    
+                  </ul>
+                </nav>
+              </li>
+            </ul>
+            
+          </nav>
+          
+        </div>
+      </div>
+    </div>
+    <article class="md-content__inner md-typeset">
+      
+        
+  
+
+
+
+  
+  
+
+
+<h1 id="overfit8-alphafold2-the-structure-network"><strong>Overfit#8:</strong> AlphaFold2: The structure network</h1>
+<p><img alt="main image post drug discovery" src="../../../../images/8/main.jpg" /></p>
+<!-- more -->
+
+<div class="admonition note">
+<p class="admonition-title">Before you start</p>
+<p>This post is the third episode of a series about the AlphaFold2<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup><sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup> paper. If you haven't already, I highly recommend to read the previous posts first:</p>
+<ol>
+<li><a href="../../16/overfit6-alphafold2-introduction/">Intro: The protein folding problem</a></li>
+<li><a href="../../18/overfit7-alphafold2-the-evoformer-network/">Part 1: The Evoformer network</a></li>
+<li><a href="./">Part 2: The structure network</a> (you are here)</li>
+</ol>
+</div>
+<h2 id="problem-formulation">Problem formulation</h2>
+<p>It is now time to predict the structure of the protein. But <strong>what</strong> do we want to predict exactly?</p>
+<p>The <strong>naive approach</strong> would be to train the network to predict the 3D coordinates of each atom in the protein. Yet the number of outputs <span class="arithmatex">\((N_{atoms} \times 3)\)</span> would be huge, because a protein contains &gt;10k atoms. Moreover, this approach is not translation/rotation invariant (for the model, a protein rotated is not the same, while it is the exact same problem).</p>
+<p>Instead, AlphaFold2 predicts the position of residues <strong>relative to the previous residue</strong>. So the output of the network are the translations and rotations for each residue, <strong>in the local frame</strong> of its preceding neighbor. This also enforces that two consecutive residues are spatially close.</p>
+<blockquote>
+<p>👉 To better understand, let's take a look at what a residue looks like.</p>
+</blockquote>
+<h2 id="its-all-about-translations-and-rotations">It's all about translations and rotations</h2>
+<p>A protein is a linear sequence of residues. Each residue brings with 3 atoms (2 carbon + 1 nitrogen) to the backbone. But residues are not linear, they have also side chains, made of 4-5 carbon chains.</p>
+<p>AlphaFold splits the structure prediction task into 2 steps:</p>
+<p>1️⃣ First AF2 ignores the side chains and focuses on the residue backbone. It predicts the translation and the rotation to move from one residue to the next (blue triangles).</p>
+<div class="admonition quote">
+<p><figure markdown>
+<img alt="structure-angles" src="../../../../images/8/angles-naming.png" width="500" />
+ <figcaption>Each triplet black/gray/blue is one residue. The triangle they make is displayed in blue in the second figure.</figcaption>
+</figure></p>
+<p><figure markdown>
+<img alt="structure-angles" src="../../../../images/8/structure-angles.png" width="500" />
+<figcaption>In AlphaFold, the only degrees of freedom are the torsion angles. The length of the bonds and the angle they make with each other are fixed. The blue triangle are the triangles formed by the 3 backbone atoms of the residue. The degrees of freedom of the side chains are displayed as green circles.</figcaption>
+</figure></p>
+</div>
+<p>2️⃣ Second, the model refines its prediction. It considers the protein as a rigid body, whose only degrees of freedom are the 3 torsion angles of the backbone and the 4 torsion angles of the side chain, per residue.</p>
+<blockquote>
+<p>👉 Ultimately, AlphaFold predicts the 7 angles for each residue. By composing the local transformations, we can then recover the 3D shape of the protein in the global frame.</p>
+</blockquote>
+<div class="admonition quote">
+<p><figure markdown>
+<img alt="angles" src="../../../../images/8/angles.png" />
+<figcaption>If the only degrees of freedom are the torsion angles, the 3D shape of a residue is parametrized by 7 angles. 3 for the backbone and 4<span class="arithmatex">\(\chi\)</span> angles for the side chain.</figcaption>
+</figure></p>
+</div>
+<blockquote>
+<p>👉 Now that we have a target, let's see how the structure network predicts it.</p>
+</blockquote>
+<h2 id="structure-network">Structure network</h2>
+<p>The <strong>structure network</strong> is an 8-block submodule, with shared weights, that converts the pair-wise representation and the first row of the MSA representation into a 3D structure prediction.</p>
+<figure>
+<p><img alt="structure" src="../../../../images/8/structure-prediction.png" /></p>
+<figcaption>The structure module predicts the protein structure from the single representation and the pair representation (outputs of the Evoformer).</figcaption>
+</figure>
+<p>We can split the structure prediction into 3 steps.</p>
+<ol>
+<li><strong>The IPA module</strong>: an equivariant transformer that compresses information from the MSA, the pair representation and the backbone frames into one vector.</li>
+<li><strong>The backbone structure prediction</strong>: This module updates the coarse guess of the protein backbone = task 1️⃣</li>
+<li><strong>The atom-wise structure prediction</strong>: In this last module, AlphaFold refines its backbone prediction and predicts the angles of each residue side chain (denoted as <span class="arithmatex">\(\chi\)</span> angles on the figure) = task 2️⃣.</li>
+</ol>
+<h3 id="ipa-module">IPA module</h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>It sounds like a beer, but it's not. 🍺</p>
+</div>
+<p>The IPA - <strong>Invariant Point Attention</strong> - module is the engine of the structure network. It takes as inputs the 3 representations of the protein: the single MSA representation + the pair representation + the frames (the blue triangles). It returns an updated single representation embedding. This will serve as input to the predictors later.</p>
+<p>In a nutshell, it is a classic global attention block, equivariant to global frame transformations (translations/rotations).</p>
+<blockquote>
+<p><em>"The invariance with respect to the global reference frame in turn implies that applying a shared rigid motion to all residues, while keeping the embeddings fixed, will lead to the same update in the local frames"</em></p>
+</blockquote>
+<ul>
+<li>in red: classic global attention mechanism over the single representation.</li>
+<li>in blue: the pair representation biases the attention matrix, like in the Evoformer.</li>
+<li>in green: invariant point attention</li>
+</ul>
+<figure>
+<p><img alt="structure" src="../../../../images/8/ipa.png" /></p>
+<figcaption>Invariant Point Attention Module. From the supplementary paper [5].</figcaption>
+</figure>
+<div class="admonition quote">
+<p class="admonition-title">To go further ...</p>
+<p>If you are curious, check out this Medium post from Jude Wells: <a href="https://medium.com/@judewells/invariant-point-attention-in-alphafold-2-dedf22738859">Invariant Point Attention in Alphafold 2</a> or the Supplementary paper (section 1.8.2).</p>
+</div>
+<h3 id="backbone-prediction">Backbone prediction</h3>
+<p>After the single representation update by the IPA module, AlphaFold2 updates the backbone frames.</p>
+<p>For the first iteration, all the frames are initialized with the identity transform (no translation, no rotation). Fun fact: This initialization is called the "black hole initialization", because all the residues are located at the same place. Then, as the prediction refines, the frames move to their final location and the protein structure appears.</p>
+<p>The output of the backbone prediction module (in purple in the figure) is a quaternion for each residue. This quaternion is converted into a translation vector <span class="arithmatex">\((1, 3)\)</span> and a rotation matrix <span class="arithmatex">\((3, 3)\)</span> through standard maths:</p>
+<figure>
+<p><img alt="structure" src="../../../../images/8/backbone-update.png" width="width" /></p>
+<figcaption>Pseudo code to convert the quaternion into the translation vector and the rotation matrix.</figcaption>
+</figure>
+<h3 id="atom-wise-prediction">Atom-wise prediction</h3>
+<p>In the end, a shallow ResNet predicts the <span class="arithmatex">\(\cos\)</span> and <span class="arithmatex">\(\sin\)</span> of each torsion angle. This approach avoids the discontinuity encountered with direct predictions in <span class="arithmatex">\([0, 2\pi]\)</span>. An auxiliary loss also encourages a unit norm of the raw vector.</p>
+<p>Extra work is also required to disambiguate rigid groups that are symmetric, and for which multiple structures are acceptable equivalent solutions.</p>
+<p>To get the 3D positions of the atoms, the predicted translations and rotations are finally composed to get 3D coordinates in the global frame.</p>
+<h3 id="losses">Losses</h3>
+<p>To train AlphaFold2, the DeepMind's team came up with a <strong>multi-term loss</strong> function:</p>
+<div class="arithmatex">\[\mathcal{L} = 0.5 \mathcal{L}_{FAPE} + 0.5 \mathcal{L}_{aux} + 0.3 \mathcal{L}_{dist} + 2.0 \mathcal{L}_{msa} + 0.01 \mathcal{L}_{conf}\]</div>
+<p>The <strong>main loss</strong> term is the <strong>FAPE</strong>, a homemade loss from DeepMind. The FAPE (Frame Aligned Point Error) assesses the atom coordinates and compares their distance to the ground truth, somehow like a L2 loss term. It also has some cool properties like non-invariance to reflection so it avoids creating proteins of the wrong chirality.</p>
+<p>In theory, it should be the only loss term, but auxiliary losses were needed to achieve better/faster/more interpretable training. Each auxiliary loss has a purpose:</p>
+<ul>
+<li><span class="arithmatex">\(\mathcal{L}_{aux}\)</span> is a mixture of the FAPE and of the torsion angle loss over the intermediate results. It constrains the model prediction to converge fast.</li>
+<li><span class="arithmatex">\(\mathcal{L}_{dist}\)</span> is a distogram loss. It puts constraints on the distance between atoms, to make sure the pair representation is useful and meaningful.</li>
+<li><span class="arithmatex">\(\mathcal{L}_{msa}\)</span> is a BERT-like loss. It is an averaged cross-entropy loss for masked MSA prediction (the Evoformer is trained to complete some masked elements of the MSA during training).</li>
+<li><span class="arithmatex">\(\mathcal{L}_{conf}\)</span> is a small loss over the confidence level (pLDDT value) of the model. More on that in the <a href="#interpretability">Interpretability</a> section.</li>
+</ul>
+<hr />
+<h2 id="extra-ideas">Extra ideas</h2>
+<h3 id="noisy-student-distillation">Noisy Student Distillation</h3>
+<p>AlphaFold2 is better thanks to its architecture, but also <strong>thanks to its data</strong>!</p>
+<p>One major advantage of AlphaFold2 over the previous methods is that it leverages datasets of sequences with unknown structures. The technique is called <strong>self-distillation</strong> (not invented by the AF2 paper).</p>
+<ol>
+<li>Train a teacher model on labeled data</li>
+<li>Use the teacher to label unlabeled data</li>
+<li>Train a student model on the labeled data + the newly labeled data points with the highest confidence scores</li>
+<li>Repeat the process.</li>
+</ol>
+<p>Thanks to self-distillation, AlphaFold2 trained on an additional 350k structures, i.e. <strong>75% of the training dataset</strong>! Intuitively, one may think it would lead to model collapse, but the ablation study shows it boosts performance.</p>
+<figure>
+<p><img alt="structure" src="../../../../images/8/self-distillation.png" width="400" /></p>
+<figcaption>Ablation study of the AF2 paper [1].</figcaption>
+</figure>
+<h3 id="interpretability">Interpretability</h3>
+<p>Additionally, the model is trained to <strong>estimate the error</strong> it makes for each residue frame. That's the last small auxiliary term in the loss <span class="arithmatex">\(\mathcal{L}_{conf}\)</span>, that compares the error to the predicted error.</p>
+<p>I find it clever, because it provides some empirical estimation of how confident AlphaFold2 is about its prediction, for each residue. For instance, the authors observed a strong correlation between low plDDT scores and parts of the protein that have dynamic structures (and thus no clear ground truth).</p>
+<div class="admonition quote">
+<p><figure markdown>
+<img alt="structure" src="../../../../images/8/plddt.png" />
+<figcaption>AlphaFold2 predicts a confidence score for each residue. plDDT is thus a nice tool to know when to trust and when to ignore the model. Image from the WebUI of the AlphaFold Protein Structure Database.</figcaption>
+</figure></p>
+</div>
+<h3 id="recycling">Recycling</h3>
+<p>As mentioned earlier, AlphaFold is a sandwich of Evoformer blocks and Structure Network blocks. In practice, the network is called 3 times before. This <strong>recycling</strong> process helps the network to refine its prediction by iteratively refining the embeddings and the structure. If you are familiar with diffusion models, it's the same concept.</p>
+<hr />
+<div class="admonition note">
+<p class="admonition-title">Conclusion</p>
+<p>AlphaFold2's impact on the field makes no doubt: at CASP15, all best-performing models were improved versions of AF2.</p>
+<p>But there is still room for improvement. A few weeks ago, DeepMind released <a href="https://www.nature.com/articles/s41586-024-07487-w">Alphafold3</a>, a new diffusion-based model that claims to outperform AF2 by a significant margin. I can't wait to dive into the paper ...</p>
+<p>I only covered a small part of all the brilliant ideas of AlphaFold2. If you are looking for more, like how the data was processed or the engineering secrets of DeepMind, I definitively recommend the supplementary paper that comes with Nature's paper [^5]. It is long but rich!</p>
+<p>👋 That's all for today. Feel free to share if you appreciate the content. And I see you in the next one!</p>
+</div>
+<p><a class="md-button" href="../../18/overfit7-alphafold2-the-evoformer-network/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 12A10 10 0 0 1 12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10A10 10 0 0 1 2 12m16-1h-8l3.5-3.5-1.42-1.42L6.16 12l5.92 5.92 1.42-1.42L10 13h8z"/></svg></span> The Evoformer</a>
+<a class="md-button md-button--primary" href="../../../../">Menu <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 12a10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2a10 10 0 0 1 10 10M6 13h8l-3.5 3.5 1.42 1.42L17.84 12l-5.92-5.92L10.5 7.5 14 11H6z"/></svg></span></a></p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Jumper, J., Evans, R., Pritzel, A. et al. Highly accurate protein structure prediction with AlphaFold. Nature 596, 583–589 (2021). <a href="https://doi.org/10.1038/s41586-021-03819-2">https://doi.org/10.1038/s41586-021-03819-2</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Heidelberg AI Talk 5th of May 2022 | Highly Accurate Protein Structure Prediction with AlphaFold | Simon Kohl, DeepMind. <a href="https://www.youtube.com/watch?v=tTN0MM2CQLU">https://www.youtube.com/watch?v=tTN0MM2CQLU</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>DeepMind website, AlphaFold technology: <a href="https://deepmind.google/technologies/alphafold/">https://deepmind.google/technologies/alphafold/</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p>Supplementary Information for: Highly accurate protein structure prediction with AlphaFold: <a href="https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf">https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  
+
+
+
+      
+    </article>
+  </div>
+
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/LouisStefanuto" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/in/louis-stefanuto/" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.tabs", "navigation.expand"], "search": "../../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="../../../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

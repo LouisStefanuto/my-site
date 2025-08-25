@@ -1,0 +1,1177 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Personal website of Louis Stefanuto">
+      
+      
+      
+      
+        <link rel="prev" href="../../17/overfit4-all-the-techniques-to-control-your-text2img-models-controlnets-t2i-adapters-dreambooth-/">
+      
+      
+        <link rel="next" href="../../../05/16/overfit6-alphafold2-introduction/">
+      
+      
+      <link rel="icon" href="../../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>Overfit#5: AI for drug discovery: An introduction - Louis Stefanuto</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.7e37652d.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#overfit5-ai-for-drug-discovery-an-introduction" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../../.." title="Louis Stefanuto" class="md-header__button md-logo" aria-label="Louis Stefanuto" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Louis Stefanuto
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Overfit#5: AI for drug discovery: An introduction
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/LouisStefanuto" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../about/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  About
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../../" class="md-tabs__link">
+          
+  
+  
+  Posts
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../.." title="Louis Stefanuto" class="md-nav__button md-logo" aria-label="Louis Stefanuto" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Louis Stefanuto
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/LouisStefanuto" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Github
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    About
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Posts
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Posts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      <a href="../../../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Index
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Post series
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Post series
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/alphafold/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    AlphaFold
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/chemistry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chemistry
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/computer-vision/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Computer Vision
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/diffusion-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Diffusion models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/drug-discovery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Drug Discovery
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/embedding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Embedding
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/llm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    LLM
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/reinforcement-learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Reinforcement Learning
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/robotics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Robotics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/ssl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SSL
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/video/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Video
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-broken-market-of-drug-discovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      The broken market of drug discovery
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ai-can-improve-the-drug-success-ratio" class="md-nav__link">
+    <span class="md-ellipsis">
+      AI can improve the drug success ratio
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-main-applications-of-ai-in-drug-discovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      The main applications of AI in drug discovery
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The main applications of AI in drug discovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#molecular-property-prediction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Molecular property prediction
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#de-novo-drug-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      De novo drug design
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#binding-siteinterface-prediction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Binding site/interface prediction
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#molecular-docking" class="md-nav__link">
+    <span class="md-ellipsis">
+      Molecular docking
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-identification" class="md-nav__link">
+    <span class="md-ellipsis">
+      Target identification
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#challenges-and-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Challenges and limitations
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+  <div class="md-content md-content--post" data-md-component="content">
+    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner md-post">
+          <nav class="md-nav md-nav--primary">
+            <div class="md-post__back">
+              <div class="md-nav__title md-nav__container">
+                <a href="../../../../" class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+                  <span class="md-ellipsis">
+                    Back to index
+                  </span>
+                </a>
+              </div>
+            </div>
+            
+              <div class="md-post__authors md-typeset">
+                
+                  <div class="md-profile md-post__profile">
+                    <span class="md-author md-author--long">
+                      <img src="https://github.com/LouisStefanuto.png" alt="Louis Stefanuto">
+                    </span>
+                    <span class="md-profile__description">
+                      <strong>
+                        
+                          Louis Stefanuto
+                        
+                      </strong>
+                      <br>
+                      Creator
+                    </span>
+                  </div>
+                
+              </div>
+            
+            <ul class="md-post__meta md-nav__list">
+              <li class="md-nav__item md-nav__item--section">
+                <div class="md-post__title">
+                  <span class="md-ellipsis">
+                    Metadata
+                  </span>
+                </div>
+                <nav class="md-nav">
+                  <ul class="md-nav__list">
+                    <li class="md-nav__item">
+                      <div class="md-nav__link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"/></svg>
+                        <time datetime="2024-03-30 00:00:00+00:00" class="md-ellipsis">March 30, 2024</time>
+                      </div>
+                    </li>
+                    
+                    
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v15h3V3zm3 2 4 13 3-1-4-13zM5 5v13h3V5zM3 19v2h18v-2z"/></svg>
+                          <span class="md-ellipsis">
+                            in
+                            
+                              <a href="../../../../category/drug-discovery/">Drug Discovery</a>, 
+                              <a href="../../../../category/chemistry/">Chemistry</a></span>
+                        </div>
+                      </li>
+                    
+                    
+                      
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7z"/></svg>
+                          <span class="md-ellipsis">
+                            
+                              7 min read
+                            
+                          </span>
+                        </div>
+                      </li>
+                    
+                  </ul>
+                </nav>
+              </li>
+            </ul>
+            
+          </nav>
+          
+        </div>
+      </div>
+    </div>
+    <article class="md-content__inner md-typeset">
+      
+        
+  
+
+
+
+  
+  
+
+
+<h1 id="overfit5-ai-for-drug-discovery-an-introduction"><strong>Overfit#5:</strong> AI for drug discovery: An introduction</h1>
+<p><img alt="main image post drug discovery" src="../../../../images/5/main.jpg" /></p>
+<!-- more -->
+
+<div class="admonition note">
+<p class="admonition-title">Table of content</p>
+<ol>
+<li>The broken market of drug discovery</li>
+<li>AI can improve the drug success ratio</li>
+<li>The main applications of AI in drug discovery</li>
+</ol>
+</div>
+<h2 id="the-broken-market-of-drug-discovery">The broken market of drug discovery</h2>
+<p>Bringing a new medicine to market is a tedious process that often spans <strong>over a decade</strong>. In fact, despite the considerable efforts (and money 💸) invested, only a handful of drug candidates manage to progress to the final stage of development, resulting in a significant waste of resources and time.</p>
+<p>According to <a href="https://pubmed.ncbi.nlm.nih.gov/32125404/">J. Wouters (2020)</a>, the R&amp;D investment needed to bring a new medicine to market doubled in the last decade, with recent estimates ranging <strong>from $314 million to $2.8 billion</strong>.</p>
+<p>These massive costs were mainly due to the very low success rate of drug candidates in the preclinical and clinical phases. Pharmaceutical companies are thus looking for new techniques to <strong>better distinguish</strong> "good" candidate molecules (specific, efficient, cheap, hydrophilic) from "poor" ones (toxic, unspecific).</p>
+<figure>
+<p><img alt="frise" src="../../../../images/5/frise.png" width="600" /></p>
+<figcaption>Only a few drug candidates make it to the final stage.</figcaption>
+</figure>
+<h2 id="ai-can-improve-the-drug-success-ratio">AI can improve the drug success ratio</h2>
+<p>Decades of research have built up substantial datasets of molecules and proteins. By leveraging this data, the players of the pharmaceutical industry envision to predict the outcome of wet lab experiments ... <strong>in silico</strong>.</p>
+<!-- And to our greatest delight, their structures, chemical properties and mutual interactions [are mostly open-source](https://github.com/kjappelbaum/awesome-chemistry-datasets). -->
+
+<!-- These datasets are a gateway for AI, which excels at **finding patterns** in complex data. This is precisely the ambition of many players in the pharmaceutical industry. -->
+
+<blockquote>
+<p>🧪 Searching drug candidates using algorithms is referred to <strong>in silico</strong>, in opposition to the traditional <strong>in vitro/in vivo</strong> approach, that relies on wet lab experiments.</p>
+</blockquote>
+<div class="admonition quote">
+<p class="admonition-title">Computational biology is nothing new. Why is AI a game-changer?</p>
+</div>
+<p>For years, computational biologists have used <strong>physics-driven</strong> simulations to predict the properties of molecules and proteins. These simulations involve solving complex quantum mechanics equations, which is a time-consuming and high-computation task: it would take years to screen the whole database of compounds to find the best candidate for a single target protein.</p>
+<p>With AI, drug discovery moves from a physics-driven approach to a <strong>data-driven</strong> approach. Using the available datasets, one can train models to implicitly learn the physics. Once trained on the millions of known molecules, neural networks give a rough estimation of how promising a molecule is, at a fraction of the time needed with the traditional methods.</p>
+<p>Data-driven approaches unlock <strong>screening capabilities at scale</strong>. First, run a fast data-driven algorithm to filter a curated list of promising compounds. Then, run a slower and more precise physics-based algorithm to guess the best pick.</p>
+<blockquote>
+<table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Accuracy</th>
+<th>Inference speed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Physics-driven</td>
+<td>✅ Accurate</td>
+<td>❌ Slow</td>
+</tr>
+<tr>
+<td>Data-driven</td>
+<td>❌ Less precise</td>
+<td>✅ Fast</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<!-- Moreover, AI can help screening massive database of known molecules to check if they could be used for diseases they where first not designed for.
+
+Artificial Intelligence presents a promising solution to expedite the drug discovery phase. AI models excel at finding patterns in the data, and are thus suitable solutions to estimate if a molecule is a good candidate or not.
+
+By leveraging AI technologies, experts in biology can streamline the identification of potential drug candidates, primarily by targeting specific proteins and discerning promising compounds from less viable ones. This accelerated process aims to present superior candidates for preclinical trials, thereby increasing the likelihood of successful drug development while reducing the resources expended on less promising avenues. -->
+
+<figure>
+<p><img alt="number of drugs per stage" src="../../../../images/5/funnel.png" width="600" /></p>
+<figcaption>AI-driven Drug Discovery aims to test less but better molecules in preclinical steps. Source:<a href="https://doi.org/10.23880/ipcm-16000208"> Kumar, M. (2020).</a></figcaption>
+</figure>
+<hr />
+<h2 id="the-main-applications-of-ai-in-drug-discovery">The main applications of AI in drug discovery</h2>
+<p>Now that we covered the competitive edge of AI, let's see how AI could accelerate research, with tangible examples<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>.</p>
+<p>Since the beginning of this post, I introduced in-silico drug discovery as a monolithic task. Yet, in practice, it is a <strong>multi-step</strong> process. The first challenge is to get a fine-grained knowledge of how the disease works, to then choose the best step in the biological process to act on. Next, we need to find a molecule that binds properly to the target protein. Finally, we need to double-check for potential side effects of the compound.</p>
+<blockquote>
+<p>🔎 Hopefully, AI has the potential to accelerate each of these tasks. Let's zoom into the most relevant ones!</p>
+</blockquote>
+<h3 id="molecular-property-prediction">Molecular property prediction</h3>
+<blockquote>
+<p>🧪 Given a molecule, predict its properties (solubility, toxicity ...)</p>
+</blockquote>
+<p>This is maybe the most straightforward problem. It is fairly easy to turn this task into a Machine Learning formulation.</p>
+<p>First, we need a vectorial representation of the molecule, i.e. we <strong>embed the molecule</strong> in a latent space, usually with a Graph Neural Network (GNN). Starting from this embedding, we then perform a <strong>graph-level</strong> classification (ex. toxic/not toxic) or regression (ex. solubility), using a fully-connected neural net.</p>
+<p>Molecular property prediction is usually performed over large datasets. This process is called <strong>virtual screening</strong>. A good-performing property prediction model could discover new drugs, or new properties to existing drugs.</p>
+<figure>
+<p><img alt="property prediction" src="https://www.researcher-app.com/image/eyJ1cmkiOiJodHRwczovL3MzLWV1LXdlc3QtMS5hbWF6b25hd3MuY29tL3N0YWNrYWRlbWljL3Byb2R1Y3Rpb24vcGFwZXIvMTk4NDAxMC5wbmciLCJmb3JtYXQiOiJ3ZWJwIiwicXVhbGl0eSI6MTAwLCJub0NhY2hlIjp0cnVlfQ==.webp" width="600" /></p>
+<figcaption>Property prediction is an embedding then prediction task. <a href="https://www.researcher-app.com/image/eyJ1cmkiOiJodHRwczovL3MzLWV1LXdlc3QtMS5hbWF6b25hd3MuY29tL3N0YWNrYWRlbWljL3Byb2R1Y3Rpb24vcGFwZXIvMTk4NDAxMC5wbmciLCJmb3JtYXQiOiJ3ZWJwIiwicXVhbGl0eSI6MTAwLCJub0NhY2hlIjp0cnVlfQ==.webp">Source</a>.</figcaption>
+</figure>
+<h3 id="de-novo-drug-design">De novo drug design</h3>
+<blockquote>
+<p>🪄 The inverse of property prediction. Given some desired properties, generate a molecule with these properties.</p>
+</blockquote>
+<p>De novo drug design is essentially <strong>GenAI but for molecules</strong> (🤯). You give a wishlist as input and get a molecule as output.</p>
+<p>Depending on how you condition the generation, you can create really interesting models. For instance, if you condition the generation with the active site of a protein, you can then generate promising candidates for this target.</p>
+<p>To my mind, this is the most fascinating and thrilling of all tasks, because it enables us to discover drug patterns, unknown to date, that can then be studied and improved by biologists and chemists.</p>
+<figure>
+<p><img alt="de_novo" src="../../../../images/5/de_novo.png" width="600" /></p>
+<figcaption>De novo drug design aims to generate the molecule that would fit some properties or protein site.</figcaption>
+</figure>
+<h3 id="binding-siteinterface-prediction">Binding site/interface prediction</h3>
+<blockquote>
+<p>🧬 Given a protein, guess where its active site is.</p>
+</blockquote>
+<p>Just as some parts of our skin are more sensitive to touch than others, proteins have their "sensitive spots" called <strong>active sites</strong>. These are precise regions where molecules bind and reactions happen, essential for the protein's function.</p>
+<p>Guessing where the active site lies is key because it conditions all the downstream tasks. The better we understand the target protein, the easier it is to find a relevant ligand to bind to its active site.</p>
+<p>From an ML point of view, if we used Graph Neural Networks, this task could be a <strong>node-level</strong> classification problem.</p>
+<figure>
+<p><img alt="binding site prediction" src="https://www.creativebiomart.net/images/Protein-Binding-Site-Mapping.jpg" width="500" /></p>
+<figcaption>Binding site prediction. <a href="https://www.creativebiomart.net/images/Protein-Binding-Site-Mapping.jpg"> Source.</a></figcaption>
+</figure>
+<h3 id="molecular-docking">Molecular docking</h3>
+<blockquote>
+<p>⚓️ Given a protein and a ligand (small molecule), predict the way they twist to fit one inside the other (their conformation).</p>
+</blockquote>
+<p>To fit together, the protein's and the ligand's atoms move to <strong>minimize the energy of the whole system</strong> (protein+ligand). The lower the energy, the more stable the structure, and the better the match.</p>
+<p>This task seems like a simple optimization problem. Yet, the issue is the <strong>huge dimension</strong> of the problem, as each atom adds some degrees of freedom.</p>
+<p>AI usually performs better than gradient methods at these huge inverse problems. A good example is the AlphaFold deep learning model from Google DeepMind, which solved the protein folding problem. AI could thus help rank poses.</p>
+<figure>
+<p><img alt="docking" src="https://cbirt.net/wp-content/uploads/2023/04/DiffDock-1.png" /></p>
+<figcaption>Illustration from <a href="https://cbirt.net/wp-content/uploads/2023/04/DiffDock-1.png"> DiffDock</a>. An example of Molecular docking.</figcaption>
+</figure>
+<h3 id="target-identification">Target identification</h3>
+<blockquote>
+<p>🎯 Given a disease, find the right biological process to target. Usually, a protein to activate or inhibit.</p>
+</blockquote>
+<p>Last on my list, but usually the first step of the drug discovery journey. Target identification is the task of defining the protein to target to stop the disease.</p>
+<p>Most of the time, a disease is the cause of a sequence of protein activations in our cells. To stop a disease, we need to find the most relevant step of the process to act on. It usually means finding the protein to activate or inhibit, that has little impact on other processes in the human body. This is to avoid side-effects, that are not a great property of a drug, to be honest.</p>
+<p>Thanks to its pattern recognition capabilities, <strong>AI could help in the identification of relevant proteins to target</strong>. AI enables to better analyze multiomics data and is a bridge between the various modalities. It is thus a promising tool to identify better targets (i.e. better problems) to then find better drugs (i.e. solutions to those problems).</p>
+<figure>
+<p><img alt="de_novo" src="../../../../images/5/target_identification.png" width="600" /></p>
+<figcaption>Target identification. From [2].</figcaption>
+</figure>
+<hr />
+<div class="admonition success">
+<p class="admonition-title">To sum up ...</p>
+<p>Drug discovery companies are working on each of these topics, building end-to-end pipelines to validate new chemical compounds. With these pipelines, they scrap the database of known molecules and seek promising candidates ...</p>
+</div>
+<h2 id="challenges-and-limitations">Challenges and limitations</h2>
+<ul>
+<li><strong>Data is the limit</strong> To train their models, researchers use open databases of all the known molecules and proteins to date. Yet these databases are expensive to expand and biased towards some types of molecules.</li>
+<li><strong>The feedback loop with the wet labs is slow</strong> It takes years to validate a new drug. Only time will tell if all the investments in the field were worth it, or just a dead-end.</li>
+<li><strong>Misuses</strong> It is pretty straightforward to use AI to generate molecules that harm (poisons) rather than molecules that cure. As always, AI is ambivalent.</li>
+</ul>
+<hr />
+<h2 id="conclusion">Conclusion</h2>
+<p>This is the end of our little journey at the intersection of AI and biology. I hope you enjoyed it! 🧪</p>
+<p>As model architectures tailored for Computer Vision (ResNets) and NLP (RNN, Transformers) flourished in the last decade, I am convinced that new architectures are developing to crack these problems. I am especially curious about architectures that ensure rotation and translation invariances (SE3).</p>
+<blockquote>
+<p>I plan to post on this topic in future posts. More on that soon. So, stay connected! 👋</p>
+</blockquote>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Clemens Isert, Kenneth Atz, Gisbert Schneider, <a href="https://arxiv.org/abs/2210.11250">"Structure-based drug design with geometric deep learning"</a> (2022): A survey of existing algorithms for each of the 4 problems.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Frank W. Pun, Ivan V. Ozerov, Alex Zhavoronkov, <a href="https://pdf.sciencedirectassets.com/271047/1-s2.0-S0165614722X00102/1-s2.0-S0165614723001372/main.pdf?X-Amz-Security-Token=IQoJb3JpZ2luX2VjEFcaCXVzLWVhc3QtMSJGMEQCICPBVH8x89gAp68zo71uvUEVB7tIx4Dnhiz0cHSm8Hj5AiAUe2HmMU3Dv4Cc4tvmMRrGU3Qpf9VAgnQs1B34pgTEJCq8BQiA%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAUaDDA1OTAwMzU0Njg2NSIMtfSdlPlHXuX%2FJtE%2FKpAFfpiwz4Zy19EmaZfY%2FvOBLs0z%2Fj68S6irAENXMeqqlW%2FT9J6AFnJAfiYZarM488pou6GgA9OZy5B6VtZo2JeD0soURkxZyOOwcxy2lOWsLqnPPAvB0gZllvwPdHE%2Fz%2F8pCLYS%2FBczZJEvZraSHtMM6wAqw3sOEfVv%2BKfpR%2FU1bIse%2F1Pww76LB5m2yBAVV7%2FVxqy9siTVAd%2BdrHaSOr5d2Eg0i7gR7cYGyAnHoO32ZmRWq45pXPgRlPP9ObfmnPoUIRplpAZUGb6cvbryr97abwrQdh%2BkBCTH7lzQ65CfyH1w2JnZoFdvWBqMmTRu4hXnJVZrmf4HS45i67JUMn8ZGGOwjh9O3IduxQQrR1n8W23zOq%2BV91nPmlt6JRk3J3%2BKlsRmghLlx0UYN%2BiSTBe14y9VB%2FNqduEQaoLw0gHkhLVZVX%2Ffcl5RuZX%2BcT2DYtSEYzgXm15rkHWWK1yVOqe7XxqM1CARg4DkkPJ9apyefCu3z32fsXkimkItnqwF2xF3sH4GAf11sj9%2FfNORELhZ4fGZsmJBSsTZGh%2F5RQbc5fg2T3TEzspb5qw3Zzpo1YCu4%2BOlO8tj3UfuN1FOZL8Ax0AQPgyneUPGOBpT05pLxsL5rLWqTkscfPnLK0WosluNlEHYPq48CimGw7v3iyBtK2S5P%2B7zRDYdcwePvnwgHUIccZvlOyMnKhwtIxBFJZoGmj7WFYl7TNeT%2BZZrCnJCLSKDKr103ngRDGQ8OvCt08EXbq6qRAMt2ZvTc6E6BLfsHFF%2FZSyoy%2Fqen5XeDR2lMa4TKKINHqwWEaoBLehcXD2%2BcscJydTKD%2FumngDmNi7RXm%2Fy8ym9Vc21sQ8yM7S7BxbAEm4EyA4mMHCI87JbZiww17C3sAY6sgHXTkLQCDad7pAprJ5M3hVWLs2FkLlOD7MpfQArOApNoJsYvvoQP446BOGx%2FAP0LWUko3Gdy%2Fn9LmlPhAihlLTw9Mqqn5NvDd%2FWuihWsYr9UedydOqEwLBoPrXLz08HT92TGwwKnUOsnUCQXm%2FJLylVAzlJ9xdo2bctsO6whotMJPZjvJ9Jie0frMwU7g8%2BycHUC%2BP0Ms6CEOyZ8HAMWGVGzs1Z0Ue18cpmDW1mqCQCBIiU&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Date=20240403T230740Z&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Expires=300&amp;X-Amz-Credential=ASIAQ3PHCVTY7FSRUPZL%2F20240403%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Signature=cae9d7c8c9c81f401c15625e530e53271d2e92cb7f7fafaa04270aa2a19c5fbb&amp;hash=46d2e40234c30572716250097680015fb140d699eef56c565d250309b19d3220&amp;host=68042c943591013ac2b2430a89b270f6af2c76d8dfd086a07176afe7c76c2c61&amp;pii=S0165614723001372&amp;tid=spdf-6f391880-a69c-412c-8190-1fc4d3f0c2b8&amp;sid=e630497b5c6158449b2b724-beb1556ed526gxrqb&amp;type=client&amp;tsoh=d3d3LnNjaWVuY2VkaXJlY3QuY29t&amp;ua=00165750060203505000&amp;rr=86ecb75c39049ea4&amp;cc=fr">"AI-powered therapeutic target discovery"</a> (2023)&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  
+
+
+
+      
+    </article>
+  </div>
+
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/LouisStefanuto" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/in/louis-stefanuto/" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.tabs", "navigation.expand"], "search": "../../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="../../../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
