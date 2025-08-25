@@ -10,7 +10,7 @@ All dependencies are listed in the `pyproject.toml`. To create an environment, g
 
 ```console
 poetry install
-poetry shell
+source $(poetry env info --path)/bin/activate
 ```
 
 ### With conda / pip
