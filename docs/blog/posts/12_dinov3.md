@@ -96,14 +96,13 @@ This matrix captures the **relative similarities between patches**, independent 
 
 !!! quote "Why is this Gram Matrix useful?"
 
-At ~200k steps, **patch similarities are at their best**: they reflect meaningful relationships between parts of an image. As training continues, **global representations get stronger** (good for classification), but **patch-level consistency drifts** (bad for segmentation). Without constraints, the student forgets these useful local relations, even though they were already learned earlier.
-
-So the idea is simple:
+At ~200k steps, **patch similarities are at their best**: they reflect meaningful relationships between parts of an image. So here is the idea:
+<!-- As training continues, **global representations get stronger** (good for classification), but **patch-level consistency drifts** (bad for segmentation). Without constraints, the student forgets these useful local relations, even though they were already learned earlier. -->
 
 - Use the Gram matrix of an earlier checkpoint **as a reference**.  
-- Regularize the student so that its patch similarity structure remains close to this anchor, even at later stages of training.  
+- Regularize the student so that its patch similarity structure remains close to this reference, even at later stages of training.  
 
-This way, the student can continue improving features while preserving local consistency.
+This way, the student can continue improving features while preserving local consistency. **Gram Anchoring contraints similarities, not raw embeddings.**
 
 <figure markdown>
 ![scaling issues](./images/12/scaling_issues2.png){width=600}
@@ -111,6 +110,8 @@ This way, the student can continue improving features while preserving local con
 </figure>
 
 ### Gram Anchoring Loss
+
+!!! note "We are doing Deep Learning, so we need a loss. Let's rephrase our intuitions in mathematical terms."
 
 At a given step $t$, we store the teacher’s Gram matrix $G^{teacher}_t$ and enforce the student to maintain a similar patch similarity structure:
 
@@ -120,13 +121,7 @@ $$
 
 This acts as an **anchor**: the student can freely learn new features, but **patch-level relations cannot drift too far**.  
 
-In DINOv3, this loss is only added after 1M training steps, during what is called a post training phase. **Surprisingly the effect is immediate**: the model recovers local consistency in a few epochs, without any degradation in global features (orange).
-
-Other techniques are combined on top of Gram Anchoring to boost performance on higher resolution images (green), while minimizing the training budget:
-
-- **Training at higher resolution** (512, 768 instead of 256) helps learning how to embed larger images. It can be seen as context extension for LLMs.
-- **Upscaling images and then interpolating Gram matrixes** gives smoother references for the regularization.
-- **RoPE-box jittering**: basically adding noise in ROPE embeddings to get a more robust model at varying sizes
+In DINOv3, this loss is only added after 1M training steps, during what is called a post training phase. **Surprisingly the effect is immediate**: the model recovers local consistency in a few epochs, without any degradation in global features (see the green curve in the figure below).
 
 !!! quote ""
     <figure markdown>
@@ -138,6 +133,12 @@ Other techniques are combined on top of Gram Anchoring to boost performance on h
     <figcaption>Images from DINOv3 paper.</figcaption>
     </figure>
 
+Other techniques are combined on top of Gram Anchoring to boost performance on higher resolution images (orange curve), while minimizing the training budget:
+
+- **Post-training at higher resolution** (512, 768 instead of 256) helps learning how to embed larger images. It can be seen as context extension for LLMs.
+- **Upscaling images and then interpolating Gram matrixes** gives smoother references for the Gram loss.
+- **RoPE-box jittering**: basically adding noise in ROPE embeddings to get a more robust model at varying input sizes.
+
 !!! success "Key takeaway"
     Gram Anchoring is a constraint that forces the student’s patch similarity to imitate that of a past checkpoint. The 1M-step student embeddings can evolve freely, but their **patch similarity structure remains close** to the reference, preserving local consistency.
 
@@ -147,7 +148,7 @@ If you don't have the compute resources to run the 7B model, don't worry! Meta a
 
 !!! quote ""
     <figure markdown>
-    ![gram](./images/12/distilled_models.png){width=700}
+    ![distilled models](./images/12/distilled_models.png){width=700}
     <figcaption>Image from DINOv3 paper.</figcaption>
     </figure>
 
@@ -161,19 +162,32 @@ An interesting addition of DINOv3 paper is their **multi-student distillation te
 
 ## Text alignment
 
-Aligning visual embedding models is a powerful technique to build CLIP-like models that benefit from pretrained image backbones. Using the LiT training paradigm[^3], they align their ViT-L model and evaluate it on global/local
+Aligning visual embedding models with text is the process of learning a shared embedding space for both modalities. Some methods retrain models from scratch (ex. CLIP), others make use of pretrained backbones, frozen or not.
 
-## Benchmarking
+Using the LiT training paradigm[^3], DINOv3's authors went for the latter and aligned their ViT-L model with text. On global text-image alignment, the model is good but is slightly behind SOTA models like SigLIP2 or Perception Encoder.
 
-I won't cover the benchmark, because it would be too long and because the paper does it better. In a nutshell they show that DINOv3 is SOTA in most benchmarks: classification, detection, segmentation, 3D tasks, ...
+Alignement can also be evaluated at patch-level using segmentation tasks. Due to its excellent dense embeddings, it is not a surprise to see DINOv3 give SOTA performance on such benchmarks.
 
-Yet it is important to mention the effort they put in benchmarking the 7B model and its distilled models.
-
-The DINOv3 training recipe also shows strong performance on Geospatial Data and even sets the new state of the art on some benchmarks like SatLidar1M val, SatLidar1M test and Open-Canopy.
+!!! success "Key Takeaway"
+    The text-aligned DINOv3 is a strong candidate if you interested in zero-shot classification from text prompts. If you are just looking for an image multimodal embedding model, go for CLIP variations like SigLIP2.
 
 !!! quote ""
     <figure markdown>
-    ![distillation](./images/12/benchmarks.png){width=700}
+    ![text alignemnt](./images/12/text_alignment.png){width=700}
+    <figcaption>Image from DINOv3 paper.</figcaption>
+    </figure>
+
+## Benchmarking
+
+I won't cover the benchmarks in depth, because (1) it would be too long and because (2) the paper does it better. In a nutshell they show that DINOv3 is SOTA in most computer vision benchmarks: classification, detection, segmentation, 3D tasks, ...
+
+Yet it is important to mention the effort they put in benchmarking the 7B model and its distilled models.
+
+The DINOv3 training recipe also shows strong performance on Geospatial Data and even sets the new state of the art on some benchmarks like SatLidar1M val, SatLidar1M test and Open-Canopy. Note that two satellite imagery checkpoints got published with the paper.
+
+!!! quote ""
+    <figure markdown>
+    ![bench](./images/12/benchmarks.png){width=700}
     <figcaption>Image from DINOv3 paper.</figcaption>
     </figure>
 
