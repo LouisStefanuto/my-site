@@ -8,6 +8,6 @@ My core interests lie at the intersection of AI and sciences, particularly in bi
 
 ---
 
-Feel free to contact me to discuss exciting projects or simply to exchange ideas related to AI and Machine Learning. <louis.stefanuto@capgemini.com>.
+Feel free to contact me to discuss exciting projects or simply to exchange ideas related to AI and Machine Learning. <l.stefanuto@instadeep.com>.
 
 You can also reach me on [Linkedin](https://www.linkedin.com/in/louis-stefanuto/).
